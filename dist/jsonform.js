@@ -191,7 +191,8 @@ jsonform.FieldCollection = (function() {
     del = $(this.deltmpl());
     field.jel.append(del);
     del.click((function(_this) {
-      return function() {
+      return function(e) {
+        e.preventDefault();
         del.remove();
         field.jel.remove();
         _this.fields = _.without(_this.fields, field);
