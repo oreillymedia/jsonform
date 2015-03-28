@@ -47,6 +47,18 @@
             },
             "jfMax" : 5
           }
+        ],
+        "archive" : [
+          {
+            "jfTitle" : "Ideas archive",
+            "jfType" : "AjaxField",
+            "jfUrl" : "https://orm-prototype-api.herokuapp.com/posts",
+            "jfQueryParam" : "search",
+            "jfParse" : function(data) {
+              return _.map(data, function(post) { return [post.uuid, post.title] })
+            },
+            "jfMax" : 5
+          }
         ]
 
       }

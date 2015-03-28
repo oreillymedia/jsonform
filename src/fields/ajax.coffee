@@ -41,7 +41,7 @@ class jsonform.AjaxField
       success: (data) =>
         results = @config.jfParse(data)
         if results.length is 0
-          chosen.find("chosen-results").html("<li class=\"no-results\">No results matched \"<span>#{searchVal}</span>\"</li>")
+          chosen.find(".chosen-results").html("<li class=\"no-results\">No results matched \"<span>#{searchVal}</span>\"</li>")
         else
           select = @jel.find(".chosen-select")
           _.each(results, (result) =>

@@ -61,7 +61,7 @@ jsonform.AjaxField = (function() {
           var results, select;
           results = _this.config.jfParse(data);
           if (results.length === 0) {
-            return chosen.find("chosen-results").html("<li class=\"no-results\">No results matched \"<span>" + searchVal + "</span>\"</li>");
+            return chosen.find(".chosen-results").html("<li class=\"no-results\">No results matched \"<span>" + searchVal + "</span>\"</li>");
           } else {
             select = _this.jel.find(".chosen-select");
             _.each(results, function(result) {
