@@ -17,7 +17,7 @@ The config object defines the outline of the JSON object that the library should
 
 The following json config shows a single textfield to the user:
 
-```
+```js
 var config = {
   "name" : {
     "jfType" : "StringField"
@@ -27,7 +27,7 @@ var config = {
 
 The user will then be presented by a single textfield, and every edit will result in a JSON document in the original textarea that looks like this:
 
-```
+```html
 <textarea>
 {
   "name" : "whatever the user typed"
@@ -39,7 +39,7 @@ Although that's a very simple use-case, the library supports a number of more ad
 
 But what if you want the user to add more than a single name? Easy. Wrap your `jfType` object in an array, and the UI will show buttons to add/remove multiple fields. For example, this is a more complex example where a user can add up to 7 names:
 
-```
+```js
 var config = {
   "names" : [
     {
@@ -52,7 +52,7 @@ var config = {
 
 Corresponding output:
 
-```
+```html
 <textarea>
 {
   "names" : [
@@ -74,7 +74,7 @@ Look in `test/index.html` for a more complicated JSON config structure.
 
 There's a number of fields in this library, each of them with specific parameters. First, here's a number of params that apply to all fields:
 
-```
+```js
 {
   "jfType" : "XXXXField", // name of field to use
   "jfTitle" : "My title", // label to show before the input field(s)
