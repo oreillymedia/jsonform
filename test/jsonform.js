@@ -1,6 +1,16 @@
 window.jsonform = {};
 
 window.jsonform.helpers = {
+  isJsonString: function(str) {
+    var e;
+    try {
+      JSON.parse(str);
+    } catch (_error) {
+      e = _error;
+      return false;
+    }
+    return true;
+  },
   changed: function() {
     return jQuery.event.trigger('jf:change');
   },
@@ -51,7 +61,7 @@ jsonform.AjaxField = (function() {
     chosen = this.jel.find(".chosen-container");
     query = {};
     searchVal = chosen.find(".chosen-search input").val();
-    query[this.config.jfQueryParam] = searchVal;
+    query[this.config.jfSearchParam] = searchVal;
     return $.ajax({
       url: this.config.jfUrl,
       data: query,
@@ -98,6 +108,11 @@ jsonform.BooleanField = (function() {
 
   BooleanField.prototype.getValue = function() {
     return this.jel.find(".chosen-select").val() === "true";
+  };
+
+  BooleanField.prototype.setValue = function(val) {
+    this.jel.find(".chosen-select").val(val + "");
+    return this.jel.find(".chosen-select").trigger("chosen:updated");
   };
 
   return BooleanField;
@@ -206,6 +221,7 @@ jsonform.StringField = (function() {
 
 jsonform.Form = (function() {
   function Form(txtArea, jsonConfig) {
+    var txtval;
     this.jel = $('<div class="jfForm"></div>');
     this.jtxt = $(txtArea);
     this.jtxt.hide();
@@ -222,10 +238,19 @@ jsonform.Form = (function() {
       return function() {
         var json;
         json = _this.generateJson(_this.jsonConfig);
-        return _this.jtxt.val(JSON.stringify(json));
+        return _this.jtxt.val(JSON.stringify(json, null, 2));
       };
     })(this));
     this.jtxt.after(this.jel);
+    txtval = this.jtxt.val();
+    if (!!txtval) {
+      if (jsonform.helpers.isJsonString(txtval)) {
+        this.fillFields(JSON.parse(txtval), this.jsonConfig);
+      } else {
+        console.error("Textarea has invalid JSON. jsonform will not work");
+        alert("Textarea has invalid JSON. jsonform will not work");
+      }
+    }
   }
 
   Form.prototype.generateJson = function(obj) {
@@ -283,6 +308,30 @@ jsonform.Form = (function() {
             }
           };
         })(this));
+      }
+    }
+  };
+
+  Form.prototype.fillFields = function(obj, jsonConfig) {
+    if (_.isArray(obj)) {
+
+    } else {
+      if (jsonConfig.jfField) {
+        return jsonConfig.jfField.setValue(obj);
+      } else {
+        if (_.isObject(obj)) {
+          return _.each(obj, (function(_this) {
+            return function(v, k) {
+              if (jsonConfig[k]) {
+                return _this.fillFields(v, jsonConfig[k]);
+              } else {
+                console.log("jsonConfig object not present:");
+                console.log("key: ", k);
+                return console.log("value: ", v);
+              }
+            };
+          })(this));
+        }
       }
     }
   };

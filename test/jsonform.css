@@ -56,4 +56,5 @@ body {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 13px;
   color: #444;
-  outline: none; }
+  outline: none;
+  vertical-align: top; }

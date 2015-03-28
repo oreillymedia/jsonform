@@ -2,6 +2,13 @@ window.jsonform = {}
 
 window.jsonform.helpers = {
 
+  isJsonString: (str) ->
+    try
+      JSON.parse str
+    catch e
+      return false
+    true
+
   changed: -> jQuery.event.trigger('jf:change');
 
   newField : (jfObj) ->
@@ -39,16 +46,20 @@ class jsonform.Form
     # listen to global change events
     $(document).bind('jf:change', =>
       json = @generateJson(@jsonConfig)
-      @jtxt.val(JSON.stringify(json))
+      @jtxt.val(JSON.stringify(json, null, 2))
     )
 
     @jtxt.after(@jel)
 
-    # check if textarea has data
-    # if it has, we need to make absolutely sure it matches
-    # the structure of the config.
-      # if yes => figure out how to load in fields
-      # if no => console.error
+    # if textarea has data
+    txtval = @jtxt.val()
+    if !!txtval
+      # if value is valid json
+      if jsonform.helpers.isJsonString(txtval)
+        @fillFields(JSON.parse(txtval), @jsonConfig)
+      else
+        console.error("Textarea has invalid JSON. jsonform will not work")
+        alert("Textarea has invalid JSON. jsonform will not work")
 
   generateJson: (obj) ->
 
@@ -107,3 +118,37 @@ class jsonform.Form
           if _.isObject(v)
             @parseJsonConfig(v)
         )
+
+  # This function takes an existing json object (that was generated with this library)
+  # and loads the data into the fields.
+  fillFields: (obj, jsonConfig) ->
+
+    # look for fields
+    # find existing values
+    # create fields from these values
+
+    if _.isArray(obj)
+
+      # if array has single item and it has jfField
+      # get values form collection
+      #if obj.length == 1 && obj[0].jfField
+      #  return obj[0].jfField.getValue()
+      #else
+      #  return _.map(obj, (v) => @generateJson(v))
+    else
+      # if this object has a field, set value of the field
+      if jsonConfig.jfField
+        jsonConfig.jfField.setValue(obj)
+      # else go deeper through the object.
+      else
+        # if this is an object, and the same object exist in the json config
+        # loop through and fill fields inside those object values
+        if _.isObject(obj)
+          _.each(obj, (v,k) =>
+            if jsonConfig[k]
+              @fillFields(v, jsonConfig[k])
+            else
+              console.log "jsonConfig object not present:"
+              console.log "key: ", k
+              console.log "value: ", v
+          )

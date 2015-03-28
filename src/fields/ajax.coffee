@@ -32,7 +32,7 @@ class jsonform.AjaxField
 
     query = {}
     searchVal = chosen.find(".chosen-search input").val()
-    query[@config.jfQueryParam] = searchVal
+    query[@config.jfSearchParam] = searchVal
 
     $.ajax(
       url: @config.jfUrl

@@ -12,3 +12,7 @@ class jsonform.BooleanField
 
   getValue: ->
     @jel.find(".chosen-select").val() == "true"
+
+  setValue: (val) ->
+    @jel.find(".chosen-select").val(val + "")
+    @jel.find(".chosen-select").trigger("chosen:updated")
