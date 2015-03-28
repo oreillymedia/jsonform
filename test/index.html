@@ -47,6 +47,9 @@
       "9781783989508.IP",
       "0636920039563.IP"
     ]
+  },
+  "events": {
+    "event_id": 126
   }
 }
   </textarea>
@@ -98,6 +101,18 @@
             "jfType" : "StringField"
           }
         ]
+      },
+      "events" : {
+        "event_id" : {
+          "jfTitle" : "Event featured",
+          "jfType" : "AjaxField",
+          "jfUrl" : "https://orm-prototype-api.herokuapp.com/events",
+          "jfSearchParam" : "search",
+          "jfReloadParam" : "id[]",
+          "jfParse" : function(data) {
+            return _.map(data, function(event) { return [event.id, event.name] })
+          }
+        }
       }
     };
 

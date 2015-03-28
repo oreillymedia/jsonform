@@ -45,12 +45,15 @@ class jsonform.AjaxField
 
   setValue: (val) ->
 
-    # if val is string, we have to load the value to
-    # use as label in the select box.
-
-    @jel.find(".chosen-select").html('<option value="'+val[0]+'">'+val[1]+'</option>')
-    @jel.find(".chosen-select").val(val[0])
-    @jel.find(".chosen-select").trigger("chosen:updated")
+    # if val is a primitive, we have to load the value to
+    # use as label in the select box. This happens only on single
+    # fields where setValue is called from lib.
+    if !_.isObject(val)
+      @constructor.findExtraValues(@config, [val], (newVal) => @setValue(newVal[0]))
+    else
+      @jel.find(".chosen-select").html('<option value="'+val[0]+'">'+val[1]+'</option>')
+      @jel.find(".chosen-select").val(val[0])
+      @jel.find(".chosen-select").trigger("chosen:updated")
 
   loadAjax: (e) ->
 

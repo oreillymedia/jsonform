@@ -75,9 +75,17 @@ jsonform.AjaxField = (function() {
   };
 
   AjaxField.prototype.setValue = function(val) {
-    this.jel.find(".chosen-select").html('<option value="' + val[0] + '">' + val[1] + '</option>');
-    this.jel.find(".chosen-select").val(val[0]);
-    return this.jel.find(".chosen-select").trigger("chosen:updated");
+    if (!_.isObject(val)) {
+      return this.constructor.findExtraValues(this.config, [val], (function(_this) {
+        return function(newVal) {
+          return _this.setValue(newVal[0]);
+        };
+      })(this));
+    } else {
+      this.jel.find(".chosen-select").html('<option value="' + val[0] + '">' + val[1] + '</option>');
+      this.jel.find(".chosen-select").val(val[0]);
+      return this.jel.find(".chosen-select").trigger("chosen:updated");
+    }
   };
 
   AjaxField.prototype.loadAjax = function(e) {
