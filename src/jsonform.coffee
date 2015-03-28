@@ -1,14 +1,15 @@
 window.jsonform = {}
 
 window.jsonform.helpers = {
+
+  changed: -> jQuery.event.trigger('jf:change');
+
   newField : (jfObj) ->
     klass = jsonform[jfObj.jfType]
     if klass
       field = new jsonform[jfObj.jfType](jfObj)
       field.jel = $("<div></div>")
       field.el = field.jel[0]
-      field.changed = ->
-        jQuery.event.trigger('jf:change');
       return field
     else
       console.error "jsonform field doesnt exist: " + jfObj.jfType

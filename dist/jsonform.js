@@ -1,6 +1,9 @@
 window.jsonform = {};
 
 window.jsonform.helpers = {
+  changed: function() {
+    return jQuery.event.trigger('jf:change');
+  },
   newField: function(jfObj) {
     var field, klass;
     klass = jsonform[jfObj.jfType];
@@ -8,9 +11,6 @@ window.jsonform.helpers = {
       field = new jsonform[jfObj.jfType](jfObj);
       field.jel = $("<div></div>");
       field.el = field.jel[0];
-      field.changed = function() {
-        return jQuery.event.trigger('jf:change');
-      };
       return field;
     } else {
       return console.error("jsonform field doesnt exist: " + jfObj.jfType);
@@ -42,7 +42,7 @@ jsonform.BooleanField = (function() {
     return this.jel.find(".chosen-select").chosen({
       disable_search_threshold: 5,
       width: "300px"
-    }).change(this.changed);
+    }).change(jsonform.helpers.changed);
   };
 
   BooleanField.prototype.getValue = function() {
@@ -53,10 +53,23 @@ jsonform.BooleanField = (function() {
 
 })();
 
+jsonform.FieldCollectionDel = (function() {
+  function FieldCollectionDel(field) {
+    this.deltmpl = JST["fields/fieldcollection-del"];
+    this.field = field;
+  }
+
+  FieldCollectionDel.prototype.render = function() {};
+
+  return FieldCollectionDel;
+
+})();
+
 jsonform.FieldCollection = (function() {
   function FieldCollection(config) {
     this.config = config;
     this.tmpl = JST["fields/fieldcollection"];
+    this.deltmpl = JST["fields/fieldcollection-del"];
     this.jel = $("<div></div>");
     this.el = this.jel[0];
     this.fields = [];
@@ -79,14 +92,24 @@ jsonform.FieldCollection = (function() {
   };
 
   FieldCollection.prototype.addOne = function() {
-    var field, fieldConfig;
+    var del, field, fieldConfig;
     fieldConfig = _.extend({}, this.config);
     delete fieldConfig.jfTitle;
     field = jsonform.helpers.newField(fieldConfig);
     this.fields.push(field);
     this.jel.append(field.el);
     field.render();
-    return field.changed();
+    del = $(this.deltmpl());
+    this.jel.append(del);
+    del.click((function(_this) {
+      return function() {
+        del.remove();
+        field.jel.remove();
+        _this.fields = _.without(_this.fields, field);
+        return jsonform.helpers.changed();
+      };
+    })(this));
+    return jsonform.helpers.changed();
   };
 
   return FieldCollection;
@@ -205,6 +228,15 @@ __p += '\n\n<select class="chosen-select">\n  <option value="true">true</option>
 }
 return __p
 },
+"fields/fieldcollection-del": function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<a href="#" class="jfDel jfBtn">-</a>';
+
+}
+return __p
+},
 "fields/fieldcollection": function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
@@ -216,7 +248,7 @@ __p += '<span class="jfTitle">' +
 ((__t = ( jfTitle )) == null ? '' : __t) +
 '</span>';
  } ;
-__p += '\n\n<a href="#" class="jfAdd">+</a>';
+__p += '\n\n<a href="#" class="jfAdd jfBtn">+</a>';
 
 }
 return __p

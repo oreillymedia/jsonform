@@ -1,8 +1,18 @@
+class jsonform.FieldCollectionDel
+
+  constructor: (field) ->
+    @deltmpl = JST["fields/fieldcollection-del"]
+    @field = field
+
+  render: ->
+
+
 class jsonform.FieldCollection
 
   constructor: (config) ->
     @config = config
     @tmpl = JST["fields/fieldcollection"]
+    @deltmpl = JST["fields/fieldcollection-del"]
     @jel = $("<div></div>")
     @el = @jel[0]
     @fields = []
@@ -33,5 +43,15 @@ class jsonform.FieldCollection
     @jel.append(field.el)
     field.render()
 
-    # call changed to get it in the json
-    field.changed()
+    # delete button
+    del = $(@deltmpl())
+    @jel.append(del)
+    del.click(=>
+      del.remove()
+      field.jel.remove()
+      @fields = _.without(@fields, field)
+      jsonform.helpers.changed()
+    )
+
+    # call changed to update json
+    jsonform.helpers.changed()
