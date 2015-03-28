@@ -19,13 +19,64 @@ window.jsonform.helpers = {
 };
 
 jsonform.AjaxField = (function() {
-  function AjaxField() {
-    console.log("here");
+  function AjaxField(config) {
+    this.config = config;
+    this.tmpl = JST["fields/ajax"];
   }
 
-  AjaxField.prototype.render = function() {};
+  AjaxField.prototype.render = function() {
+    var timeout;
+    timeout = void 0;
+    this.jel.html(this.tmpl(this.config));
+    return this.jel.find(".chosen-select").chosen({
+      width: "300px",
+      allow_single_deselect: true,
+      no_results_text: 'Searching for'
+    }).on('chosen:no_results', (function(_this) {
+      return function(e) {
+        clearTimeout(timeout);
+        return timeout = setTimeout(function() {
+          return _this.loadAjax(e);
+        }, 800);
+      };
+    })(this)).change(jsonform.helpers.changed);
+  };
 
-  AjaxField.prototype.getValue = function() {};
+  AjaxField.prototype.getValue = function() {
+    return this.jel.find(".chosen-select").val();
+  };
+
+  AjaxField.prototype.loadAjax = function(e) {
+    var chosen, query, searchVal;
+    chosen = this.jel.find(".chosen-container");
+    query = {};
+    searchVal = chosen.find(".chosen-search input").val();
+    query[this.config.jfQueryParam] = searchVal;
+    return $.ajax({
+      url: this.config.jfUrl,
+      data: query,
+      type: 'GET',
+      success: (function(_this) {
+        return function(data) {
+          var results, select;
+          results = _this.config.jfParse(data);
+          if (results.length === 0) {
+            return chosen.find("chosen-results").html("<li class=\"no-results\">No results matched \"<span>" + searchVal + "</span>\"</li>");
+          } else {
+            select = _this.jel.find(".chosen-select");
+            _.each(results, function(result) {
+              return select.append('<option value="' + result[0] + '">' + result[1] + '</option>');
+            });
+            select.trigger("chosen:updated");
+            return chosen.find(".chosen-search input").val(searchVal);
+          }
+        };
+      })(this),
+      error: function(data) {
+        return console.log("error baby");
+      }
+    });
+  };
 
   return AjaxField;
 
@@ -89,9 +140,11 @@ jsonform.FieldCollection = (function() {
   };
 
   FieldCollection.prototype.getValue = function() {
-    return _.map(this.fields, function(field) {
+    var results;
+    results = _.map(this.fields, function(field) {
       return field.getValue();
     });
+    return _.compact(results);
   };
 
   FieldCollection.prototype.addOne = function() {
@@ -220,9 +273,16 @@ jsonform.Form = (function() {
 
 this.JST = {"fields/ajax": function(obj) {
 obj || (obj = {});
-var __t, __p = '', __e = _.escape;
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
 with (obj) {
-__p += 'This is ajax';
+
+ if(typeof(jfTitle)!== 'undefined') { ;
+__p += '<span class="jfTitle">' +
+((__t = ( jfTitle )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n\n<select class="chosen-select">\n  <option value=""></option>\n</select>';
 
 }
 return __p

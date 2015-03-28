@@ -28,7 +28,8 @@ class jsonform.FieldCollection
     )
 
   getValue: ->
-    _.map(@fields, (field) -> field.getValue())
+    results = _.map(@fields, (field) -> field.getValue())
+    _.compact(results)
 
   addOne: ->
 

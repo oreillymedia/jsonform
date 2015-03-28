@@ -38,19 +38,15 @@
         },
         "featured" : [
           {
-            "jfTitle" : "Ideas Featured",
-            "jfType" : "BooleanField",
+            "jfTitle" : "Ideas featured",
+            "jfType" : "AjaxField",
+            "jfUrl" : "https://orm-prototype-api.herokuapp.com/posts",
+            "jfQueryParam" : "search",
+            "jfParse" : function(data) {
+              return _.map(data, function(post) { return [post.uuid, post.title] })
+            },
             "jfMax" : 5
           }
-          //{
-          //  "jfType" : "AjaxField",
-          //  "jfUrl" : "https://orm-prototype-api.herokuapp.com/posts",
-          //  "jfQueryParam" : "search",
-          //  "jfParse" : function(data) {
-          //    _.map(data, function(post) { return [post.uuid, post.title] })
-          //  },
-          //  "jfMax" : 5
-          //}
         ]
 
       }
