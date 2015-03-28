@@ -59,8 +59,14 @@ class jsonform.FieldCollection
     jsonform.helpers.changed()
 
   fieldsFromValues: (vals) ->
+
+    # if this field needs extra values for setvalue,
+    # call the function. This is mostly for select boxes
+    # where we also need the label besides the value
     if jsonform[@config.jfType].findExtraValues
-      console.log "Find extra values"
+      jsonform[@config.jfType].findExtraValues(@config, vals, (vals) =>
+        _.each(vals, (val) => @addOne(val))
+      )
     else
       _.each(vals, (val) => @addOne(val))
 

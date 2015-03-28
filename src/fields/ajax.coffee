@@ -1,7 +1,19 @@
 class jsonform.AjaxField
 
-  @findExtraValues: (vals, success) ->
-    console.log "load from values", vals, success
+  @findExtraValues: (config, vals, success) ->
+
+    query = {}
+    query[config.jfReloadParam] = vals
+
+    $.ajax(
+      url: config.jfUrl
+      data: query
+      type: 'GET'
+      success: (data) =>
+        success(config.jfParse(data))
+      error: (data) ->
+        console.log("error baby")
+    )
 
   constructor: (config) ->
     @config = config

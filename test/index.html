@@ -78,6 +78,7 @@
             "jfType" : "AjaxField",
             "jfUrl" : "https://orm-prototype-api.herokuapp.com/posts",
             "jfSearchParam" : "search",
+            "jfReloadParam" : "uuid[]",
             "jfParse" : function(data) {
               return _.map(data, function(post) { return [post.uuid, post.title] })
             },

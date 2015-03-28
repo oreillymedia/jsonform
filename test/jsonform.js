@@ -26,8 +26,23 @@ window.jsonform.helpers = {
 };
 
 jsonform.AjaxField = (function() {
-  AjaxField.findExtraValues = function(vals, success) {
-    return console.log("load from values", vals, success);
+  AjaxField.findExtraValues = function(config, vals, success) {
+    var query;
+    query = {};
+    query[config.jfReloadParam] = vals;
+    return $.ajax({
+      url: config.jfUrl,
+      data: query,
+      type: 'GET',
+      success: (function(_this) {
+        return function(data) {
+          return success(config.jfParse(data));
+        };
+      })(this),
+      error: function(data) {
+        return console.log("error baby");
+      }
+    });
   };
 
   function AjaxField(config) {
@@ -190,7 +205,13 @@ jsonform.FieldCollection = (function() {
 
   FieldCollection.prototype.fieldsFromValues = function(vals) {
     if (jsonform[this.config.jfType].findExtraValues) {
-      return console.log("Find extra values");
+      return jsonform[this.config.jfType].findExtraValues(this.config, vals, (function(_this) {
+        return function(vals) {
+          return _.each(vals, function(val) {
+            return _this.addOne(val);
+          });
+        };
+      })(this));
     } else {
       return _.each(vals, (function(_this) {
         return function(val) {
