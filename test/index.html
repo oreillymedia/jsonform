@@ -1,8 +1,50 @@
 <html>
 <head>
   <title>JSON Form test</title>
+  <link rel="stylesheet" href="chosen/chosen.css">
+  <link rel="stylesheet" href="jsonform.css">
+
+  <script type="text/javascript" src="jquery.js"></script>
+  <script type="text/javascript" src="underscore.js"></script>
+  <script type="text/javascript" src="chosen/chosen.jquery.js"></script>
+  <script type="text/javascript" src="jsonform.js"></script>
 </head>
 <body>
 
+  <h2>JSON Form test</h2>
+
+  <textarea id="test"></textarea>
+
+  <script type="text/javascript">
+
+    /*
+    { "ideas": { "enabled": true, "featured": [ "65bd3630-318b-41af-8b3c-7c0f0bb27843", "c79986cd-967e-4efd-a65f-060b20005150", "c5e1a6d4-2f8c-43cc-a1ee-277b769079ce", "c55981b4-f551-496f-9941-c77446f2be10", "9792f811-fc6e-4fa6-9627-91764557ce9b" ], "archive": [ "fa6b11f1-5ee6-4ce9-97d9-2e8e6619d2c7", "b0440561-5bc5-41af-b51f-77e4fdd3b796", "82a336a9-c3a5-4d6f-a962-9dc83e2aca59" ] }, "learning": { "enabled": true, "featured": [ "e5bc131a-e456-4dfc-a477-f96d8cc2f59e", "c794a40b-c239-4270-9cb7-69c5ab8d91b8", "b0c6f45f-cc4f-4c32-9a70-c3c4adc54c70" ], "archive": [ "7f56a491-e919-4852-8bb6-94a65006f0dd", "77c5814d-a690-4044-97fc-fc4b26804775", "1a9f875b-c266-4bce-94a1-15799c7a2b5d" ] }, "shop": { "enabled": true, "products": [ "0636920040149.IP", "9781783288601.IP", "9781783989508.IP", "0636920039563.IP", "0636920038924.IP", "0636920038696.IP", "0636920038382.IP", "0636920037293.IP", "0636920037057.IP", "0636920036623.IP", "0636920036395.IP", "0636920036180.IP", "0636920026228.IP" ] }, "people": { "enabled": true, "featured": [ "f4da7790-4f1c-4c01-baae-5c3bce99206f", "e0841b33-3101-4500-b183-4aea28b80ca5", "13f3395c-d767-4dc7-952b-703d1cd162d1" ] }, "events": { "enabled": true, "event_id": 126, "featured": [ 39726, 39741, 40025, 38976 ], "archive": [ 39167, 37852, 39169, 33714 ] } }
+    */
+
+    var configObject = {
+      "ideas" : {
+        "enabled" : {
+          "jfTitle" : "Ideas",
+          "jfType" : "BooleanField"
+        }//,
+        //"featured" : [
+        //  {
+        //    "jfType" : "AjaxField",
+        //    "url" : "https://orm-prototype-api.herokuapp.com/posts",
+        //    "urlQuery" : "search",
+        //    "parse" : function(data) {
+        //      _.map(data, function(post) { return [post.uuid, post.title] })
+        //    },
+        //    "max" : 5
+        //  }
+        //]
+
+      }
+    };
+
+    $(function() {
+      var jf = new jsonform.Form($("#test")[0], configObject);
+    });
+  </script>
 </body>
 </html>
