@@ -8,7 +8,7 @@ window.jsonform.helpers = {
     klass = jsonform[jfObj.jfType]
     if klass
       field = new jsonform[jfObj.jfType](jfObj)
-      field.jel = $("<div></div>")
+      field.jel = $('<div class="jfField"></div>')
       field.el = field.jel[0]
       return field
     else

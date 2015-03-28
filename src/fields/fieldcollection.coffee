@@ -45,7 +45,7 @@ class jsonform.FieldCollection
 
     # delete button
     del = $(@deltmpl())
-    @jel.append(del)
+    field.jel.append(del)
     del.click(=>
       del.remove()
       field.jel.remove()

@@ -9,7 +9,7 @@ window.jsonform.helpers = {
     klass = jsonform[jfObj.jfType];
     if (klass) {
       field = new jsonform[jfObj.jfType](jfObj);
-      field.jel = $("<div></div>");
+      field.jel = $('<div class="jfField"></div>');
       field.el = field.jel[0];
       return field;
     } else {
@@ -100,7 +100,7 @@ jsonform.FieldCollection = (function() {
     this.jel.append(field.el);
     field.render();
     del = $(this.deltmpl());
-    this.jel.append(del);
+    field.jel.append(del);
     del.click((function(_this) {
       return function() {
         del.remove();
