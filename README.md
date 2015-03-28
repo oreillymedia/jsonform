@@ -4,7 +4,7 @@ This is a javascript library that can auto-generate a form to help a user genera
 
 You use JSON form by providing a textarea DOM element (empty or filled with existing JSON data), and a JSON object that describes the JSON you want to manipulate via the form.
 
-```
+```js
 var configObject = {
   ...      
 };
