@@ -82,3 +82,39 @@ There's a number of fields in this library, each of them with specific parameter
 }
 ```
 
+### BooleanField
+
+No specific options. Will show a select box with `true` or `false`.
+
+```js
+{
+  "jfType" : "BooleanField"
+}
+```
+
+### StringField
+
+No specific options. Will show an input text field.
+
+```js
+{
+  "jfType" : "StringField"
+}
+```
+
+### AjaxField
+
+A more complex field. Will show a dropdown with search box, do a GET request against an external API to get results, and populate the results in the select box.
+
+```js
+{
+  "jfType" : "AjaxField",
+  "jfUrl" : "http://my.api", // URL for API endpoint
+  "jfSearchParam" : "search", // query param to use for search query (http://my.api?search=QUERY)
+  "jfReloadParam" : "uuid[]", // used to populate existing data. The field will make a single request with all values set to this array param, and use parse function to populate the fields. Look in test/index.html
+  "jfParse" : function(data) { }) // Parse function that is passed the API response, and should return an array of [value, label] for the select.
+}
+```
+
+
+
