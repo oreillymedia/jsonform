@@ -1,8 +1,13 @@
 class jsonform.AjaxField
 
+  @findExtraValues: (vals, success) ->
+    console.log "load from values", vals, success
+
   constructor: (config) ->
     @config = config
     @tmpl = JST["fields/ajax"]
+    @jel = $('<div class="jfField"></div>')
+    @el = @jel[0]
 
   render: ->
 
@@ -25,6 +30,15 @@ class jsonform.AjaxField
 
   getValue: ->
     @jel.find(".chosen-select").val()
+
+  setValue: (val) ->
+
+    # if val is string, we have to load the value to
+    # use as label in the select box.
+
+    @jel.find(".chosen-select").html('<option value="'+val[0]+'">'+val[1]+'</option>')
+    @jel.find(".chosen-select").val(val[0])
+    @jel.find(".chosen-select").trigger("chosen:updated")
 
   loadAjax: (e) ->
 

@@ -3,6 +3,8 @@ class jsonform.BooleanField
   constructor: (config) ->
     @config = config
     @tmpl = JST["fields/boolean"]
+    @jel = $('<div class="jfField"></div>')
+    @el = @jel[0]
 
   render: ->
     @jel.html(@tmpl(@config))

@@ -14,10 +14,7 @@ window.jsonform.helpers = {
   newField : (jfObj) ->
     klass = jsonform[jfObj.jfType]
     if klass
-      field = new jsonform[jfObj.jfType](jfObj)
-      field.jel = $('<div class="jfField"></div>')
-      field.el = field.jel[0]
-      return field
+      return new jsonform[jfObj.jfType](jfObj)
     else
       console.error "jsonform field doesnt exist: " + jfObj.jfType
 }
@@ -61,14 +58,15 @@ class jsonform.Form
         console.error("Textarea has invalid JSON. jsonform will not work")
         alert("Textarea has invalid JSON. jsonform will not work")
 
+  # Recursive.
   generateJson: (obj) ->
 
     if _.isArray(obj)
 
       # if array has single item and it has jfField
       # get values form collection
-      if obj.length == 1 && obj[0].jfField
-        return obj[0].jfField.getValue()
+      if obj.length == 1 && obj[0].jfCollection
+        return obj[0].jfCollection.getValue()
       else
         return _.map(obj, (v) => @generateJson(v))
     else
@@ -89,7 +87,7 @@ class jsonform.Form
         else
           return obj
 
-
+  # Recursive.
   parseJsonConfig: (obj) ->
 
     if _.isArray(obj)
@@ -97,8 +95,8 @@ class jsonform.Form
       # if array has single item and it has jfType
       # convert it to a fieldcollection
       if obj.length == 1 && obj[0].jfType
-        obj[0].jfField = new jsonform.FieldCollection(obj[0])
-        @fields.push(obj[0].jfField)
+        obj[0].jfCollection = new jsonform.FieldCollection(obj[0])
+        @fields.push(obj[0].jfCollection)
 
       # else parse each object in the array
       else
@@ -119,7 +117,7 @@ class jsonform.Form
             @parseJsonConfig(v)
         )
 
-  # This function takes an existing json object (that was generated with this library)
+  # Recursive. This function takes an existing json object (that was generated with this library)
   # and loads the data into the fields.
   fillFields: (obj, jsonConfig) ->
 
@@ -129,14 +127,16 @@ class jsonform.Form
 
     if _.isArray(obj)
 
-      # if array has single item and it has jfField
-      # get values form collection
-      #if obj.length == 1 && obj[0].jfField
-      #  return obj[0].jfField.getValue()
-      #else
-      #  return _.map(obj, (v) => @generateJson(v))
+      # if config has single item and it has jfCollection
+      # fill with fields based on values
+      if jsonConfig.length == 1 && jsonConfig[0].jfCollection
+        jsonConfig[0].jfCollection.fieldsFromValues(obj)
+      else
+        _.each(obj, (v, i) =>
+          @fillFields(obj[i], jsonConfig[i])
+        )
     else
-      # if this object has a field, set value of the field
+      # if this object has a field, set value.
       if jsonConfig.jfField
         jsonConfig.jfField.setValue(obj)
       # else go deeper through the object.

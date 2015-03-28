@@ -15,13 +15,10 @@ window.jsonform.helpers = {
     return jQuery.event.trigger('jf:change');
   },
   newField: function(jfObj) {
-    var field, klass;
+    var klass;
     klass = jsonform[jfObj.jfType];
     if (klass) {
-      field = new jsonform[jfObj.jfType](jfObj);
-      field.jel = $('<div class="jfField"></div>');
-      field.el = field.jel[0];
-      return field;
+      return new jsonform[jfObj.jfType](jfObj);
     } else {
       return console.error("jsonform field doesnt exist: " + jfObj.jfType);
     }
@@ -29,9 +26,15 @@ window.jsonform.helpers = {
 };
 
 jsonform.AjaxField = (function() {
+  AjaxField.findExtraValues = function(vals, success) {
+    return console.log("load from values", vals, success);
+  };
+
   function AjaxField(config) {
     this.config = config;
     this.tmpl = JST["fields/ajax"];
+    this.jel = $('<div class="jfField"></div>');
+    this.el = this.jel[0];
   }
 
   AjaxField.prototype.render = function() {
@@ -54,6 +57,12 @@ jsonform.AjaxField = (function() {
 
   AjaxField.prototype.getValue = function() {
     return this.jel.find(".chosen-select").val();
+  };
+
+  AjaxField.prototype.setValue = function(val) {
+    this.jel.find(".chosen-select").html('<option value="' + val[0] + '">' + val[1] + '</option>');
+    this.jel.find(".chosen-select").val(val[0]);
+    return this.jel.find(".chosen-select").trigger("chosen:updated");
   };
 
   AjaxField.prototype.loadAjax = function(e) {
@@ -96,6 +105,8 @@ jsonform.BooleanField = (function() {
   function BooleanField(config) {
     this.config = config;
     this.tmpl = JST["fields/boolean"];
+    this.jel = $('<div class="jfField"></div>');
+    this.el = this.jel[0];
   }
 
   BooleanField.prototype.render = function() {
@@ -116,18 +127,6 @@ jsonform.BooleanField = (function() {
   };
 
   return BooleanField;
-
-})();
-
-jsonform.FieldCollectionDel = (function() {
-  function FieldCollectionDel(field) {
-    this.deltmpl = JST["fields/fieldcollection-del"];
-    this.field = field;
-  }
-
-  FieldCollectionDel.prototype.render = function() {};
-
-  return FieldCollectionDel;
 
 })();
 
@@ -162,7 +161,7 @@ jsonform.FieldCollection = (function() {
     return _.compact(results);
   };
 
-  FieldCollection.prototype.addOne = function() {
+  FieldCollection.prototype.addOne = function(defaultValue) {
     var del, field, fieldConfig;
     fieldConfig = _.extend({}, this.config);
     delete fieldConfig.jfTitle;
@@ -171,6 +170,9 @@ jsonform.FieldCollection = (function() {
     this.fields.push(field);
     this.jel.append(field.el);
     field.render();
+    if (defaultValue) {
+      field.setValue(defaultValue);
+    }
     del = $(this.deltmpl());
     field.jel.append(del);
     del.click((function(_this) {
@@ -184,6 +186,18 @@ jsonform.FieldCollection = (function() {
     })(this));
     this.checkAddState();
     return jsonform.helpers.changed();
+  };
+
+  FieldCollection.prototype.fieldsFromValues = function(vals) {
+    if (jsonform[this.config.jfType].findExtraValues) {
+      return console.log("Find extra values");
+    } else {
+      return _.each(vals, (function(_this) {
+        return function(val) {
+          return _this.addOne(val);
+        };
+      })(this));
+    }
   };
 
   FieldCollection.prototype.checkAddState = function() {
@@ -204,6 +218,8 @@ jsonform.StringField = (function() {
   function StringField(config) {
     this.config = config;
     this.tmpl = JST["fields/string"];
+    this.jel = $('<div class="jfField"></div>');
+    this.el = this.jel[0];
   }
 
   StringField.prototype.render = function() {
@@ -213,6 +229,10 @@ jsonform.StringField = (function() {
 
   StringField.prototype.getValue = function() {
     return this.jel.find("input").val();
+  };
+
+  StringField.prototype.setValue = function(val) {
+    return this.jel.find("input").val(val);
   };
 
   return StringField;
@@ -256,8 +276,8 @@ jsonform.Form = (function() {
   Form.prototype.generateJson = function(obj) {
     var newObj;
     if (_.isArray(obj)) {
-      if (obj.length === 1 && obj[0].jfField) {
-        return obj[0].jfField.getValue();
+      if (obj.length === 1 && obj[0].jfCollection) {
+        return obj[0].jfCollection.getValue();
       } else {
         return _.map(obj, (function(_this) {
           return function(v) {
@@ -287,8 +307,8 @@ jsonform.Form = (function() {
   Form.prototype.parseJsonConfig = function(obj) {
     if (_.isArray(obj)) {
       if (obj.length === 1 && obj[0].jfType) {
-        obj[0].jfField = new jsonform.FieldCollection(obj[0]);
-        return this.fields.push(obj[0].jfField);
+        obj[0].jfCollection = new jsonform.FieldCollection(obj[0]);
+        return this.fields.push(obj[0].jfCollection);
       } else {
         return _.each(obj, (function(_this) {
           return function(v) {
@@ -314,7 +334,15 @@ jsonform.Form = (function() {
 
   Form.prototype.fillFields = function(obj, jsonConfig) {
     if (_.isArray(obj)) {
-
+      if (jsonConfig.length === 1 && jsonConfig[0].jfCollection) {
+        return jsonConfig[0].jfCollection.fieldsFromValues(obj);
+      } else {
+        return _.each(obj, (function(_this) {
+          return function(v, i) {
+            return _this.fillFields(obj[i], jsonConfig[i]);
+          };
+        })(this));
+      }
     } else {
       if (jsonConfig.jfField) {
         return jsonConfig.jfField.setValue(obj);

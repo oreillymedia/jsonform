@@ -1,12 +1,3 @@
-class jsonform.FieldCollectionDel
-
-  constructor: (field) ->
-    @deltmpl = JST["fields/fieldcollection-del"]
-    @field = field
-
-  render: ->
-
-
 class jsonform.FieldCollection
 
   constructor: (config) ->
@@ -31,7 +22,7 @@ class jsonform.FieldCollection
     results = _.map(@fields, (field) -> field.getValue())
     _.compact(results)
 
-  addOne: ->
+  addOne: (defaultValue) ->
 
     # remove some values that are meant for the
     # collection.
@@ -39,12 +30,16 @@ class jsonform.FieldCollection
     delete fieldConfig.jfTitle
     delete fieldConfig.jfHelper
     field = jsonform.helpers.newField(fieldConfig)
+
     @fields.push(field)
 
     # first append field elements so they are a part of the dom
     # this makes is possible for them to instantiate chosen in render
     @jel.append(field.el)
     field.render()
+
+    if defaultValue
+      field.setValue(defaultValue)
 
     # delete button
     del = $(@deltmpl())
@@ -62,6 +57,12 @@ class jsonform.FieldCollection
 
     # call changed to update json
     jsonform.helpers.changed()
+
+  fieldsFromValues: (vals) ->
+    if jsonform[@config.jfType].findExtraValues
+      console.log "Find extra values"
+    else
+      _.each(vals, (val) => @addOne(val))
 
   checkAddState: ->
     if @config.jfMax
