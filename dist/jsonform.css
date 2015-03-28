@@ -27,6 +27,10 @@ body {
   height: 30px;
   line-height: 30px; }
 
+.jfAdd[disabled] {
+  opacity: 0.4;
+  pointer-events: none; }
+
 .jfDel {
   vertical-align: middle;
   margin-left: 5px;

@@ -79,6 +79,9 @@ jsonform.FieldCollection = (function() {
     this.jel.html(this.tmpl(this.config));
     return this.jel.find(".jfAdd").click((function(_this) {
       return function(e) {
+        if ($(_this).is("[disabled]")) {
+          return;
+        }
         e.preventDefault();
         return _this.addOne();
       };
@@ -106,10 +109,22 @@ jsonform.FieldCollection = (function() {
         del.remove();
         field.jel.remove();
         _this.fields = _.without(_this.fields, field);
+        _this.checkAddState();
         return jsonform.helpers.changed();
       };
     })(this));
+    this.checkAddState();
     return jsonform.helpers.changed();
+  };
+
+  FieldCollection.prototype.checkAddState = function() {
+    if (this.config.jfMax) {
+      if (this.fields.length >= this.config.jfMax) {
+        return this.jel.find(".jfAdd").attr("disabled", "disabled");
+      } else {
+        return this.jel.find(".jfAdd").removeAttr("disabled");
+      }
+    }
   };
 
   return FieldCollection;

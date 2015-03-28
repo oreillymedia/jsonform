@@ -22,6 +22,7 @@ class jsonform.FieldCollection
     @jel.html(@tmpl(@config))
 
     @jel.find(".jfAdd").click( (e) =>
+      return if $(this).is("[disabled]")
       e.preventDefault()
       @addOne()
     )
@@ -50,8 +51,19 @@ class jsonform.FieldCollection
       del.remove()
       field.jel.remove()
       @fields = _.without(@fields, field)
+      @checkAddState()
       jsonform.helpers.changed()
     )
 
+    # check if we hide or show the add button
+    @checkAddState()
+
     # call changed to update json
     jsonform.helpers.changed()
+
+  checkAddState: ->
+    if @config.jfMax
+      if @fields.length >= @config.jfMax
+        @jel.find(".jfAdd").attr("disabled", "disabled")
+      else
+        @jel.find(".jfAdd").removeAttr("disabled")
