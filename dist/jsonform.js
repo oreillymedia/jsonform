@@ -151,6 +151,7 @@ jsonform.FieldCollection = (function() {
     var del, field, fieldConfig;
     fieldConfig = _.extend({}, this.config);
     delete fieldConfig.jfTitle;
+    delete fieldConfig.jfHelper;
     field = jsonform.helpers.newField(fieldConfig);
     this.fields.push(field);
     this.jel.append(field.el);
@@ -181,6 +182,25 @@ jsonform.FieldCollection = (function() {
   };
 
   return FieldCollection;
+
+})();
+
+jsonform.StringField = (function() {
+  function StringField(config) {
+    this.config = config;
+    this.tmpl = JST["fields/string"];
+  }
+
+  StringField.prototype.render = function() {
+    this.jel.html(this.tmpl(this.config));
+    return this.jel.find("input").change(jsonform.helpers.changed);
+  };
+
+  StringField.prototype.getValue = function() {
+    return this.jel.find("input").val();
+  };
+
+  return StringField;
 
 })();
 
@@ -282,6 +302,12 @@ __p += '<span class="jfTitle">' +
 ((__t = ( jfTitle )) == null ? '' : __t) +
 '</span>';
  } ;
+__p += '\n';
+ if(typeof(jfHelper)!== 'undefined') { ;
+__p += '<span class="jfHelper">' +
+((__t = ( jfHelper )) == null ? '' : __t) +
+'</span>';
+ } ;
 __p += '\n\n<select class="chosen-select">\n  <option value=""></option>\n</select>';
 
 }
@@ -296,6 +322,12 @@ with (obj) {
  if(typeof(jfTitle)!== 'undefined') { ;
 __p += '<span class="jfTitle">' +
 ((__t = ( jfTitle )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n';
+ if(typeof(jfHelper)!== 'undefined') { ;
+__p += '<span class="jfHelper">' +
+((__t = ( jfHelper )) == null ? '' : __t) +
 '</span>';
  } ;
 __p += '\n\n<select class="chosen-select">\n  <option value="true">true</option>\n  <option value="false">false</option>\n</select>';
@@ -323,7 +355,35 @@ __p += '<span class="jfTitle">' +
 ((__t = ( jfTitle )) == null ? '' : __t) +
 '</span>';
  } ;
+__p += '\n';
+ if(typeof(jfHelper)!== 'undefined') { ;
+__p += '<span class="jfHelper">' +
+((__t = ( jfHelper )) == null ? '' : __t) +
+'</span>';
+ } ;
 __p += '\n\n<a href="#" class="jfAdd jfBtn">+</a>';
+
+}
+return __p
+},
+"fields/string": function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+with (obj) {
+
+ if(typeof(jfTitle)!== 'undefined') { ;
+__p += '<span class="jfTitle">' +
+((__t = ( jfTitle )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n';
+ if(typeof(jfHelper)!== 'undefined') { ;
+__p += '<span class="jfHelper">' +
+((__t = ( jfHelper )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n\n<input type="text" />';
 
 }
 return __p

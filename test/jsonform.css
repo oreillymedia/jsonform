@@ -9,6 +9,15 @@ body {
   margin-top: 10px;
   margin-bottom: 10px; }
 
+.jfHelper {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #838383;
+  letter-spacing: 0.5px;
+  font-style: italic; }
+
 .jfBtn {
   text-decoration: none;
   color: #282828;
@@ -37,3 +46,14 @@ body {
   width: 20px;
   height: 20px;
   line-height: 20px; }
+
+.jfField input[type="text"] {
+  padding: 6px 10px;
+  border: 1px solid #B0B0B0;
+  border-radius: 5px;
+  background-color: #F7F7F7;
+  width: 300px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  color: #444;
+  outline: none; }

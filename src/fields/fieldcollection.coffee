@@ -37,6 +37,7 @@ class jsonform.FieldCollection
     # collection.
     fieldConfig = _.extend({}, @config)
     delete fieldConfig.jfTitle
+    delete fieldConfig.jfHelper
     field = jsonform.helpers.newField(fieldConfig)
     @fields.push(field)
 

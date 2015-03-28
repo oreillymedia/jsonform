@@ -17,6 +17,16 @@ body {
   margin-bottom: 10px;
 }
 
+.jfHelper {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #838383;
+  letter-spacing: 0.5px;
+  font-style: italic;
+}
+
 .jfBtn {
   text-decoration: none;
   color: #282828;
@@ -34,6 +44,7 @@ body {
   margin-bottom: 10px;
 }
 
+@import "fields/fieldcollection";
 @import "fields/boolean";
 @import "fields/ajax";
-@import "fields/fieldcollection";
+@import "fields/string";
