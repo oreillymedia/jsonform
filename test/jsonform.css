@@ -6,4 +6,19 @@ body {
 
 .jfTitle {
   display: block;
-  margin-bottom: 5px; }
+  margin-top: 10px;
+  margin-bottom: 10px; }
+
+.chosen-container {
+  margin-bottom: 10px; }
+
+.jfAdd {
+  text-decoration: none;
+  color: #282828;
+  display: inline-block;
+  padding: 6px 10px;
+  background-color: #F7F7F7;
+  text-align: center;
+  border-radius: 50%;
+  border: 1px solid #999;
+  margin-bottom: 10px; }

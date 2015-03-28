@@ -2,14 +2,24 @@ body {
   font-family: Helvetica, Arial, sans-serif;
 }
 
+// general styles for forms
+
 .jfForm {
   margin: 20px 0px;
 }
 
 .jfTitle {
   display: block;
-  margin-bottom: 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+// General styles for chosen
+
+.chosen-container {
+  margin-bottom: 10px;
 }
 
 @import "fields/boolean";
 @import "fields/ajax";
+@import "fields/fieldcollection";

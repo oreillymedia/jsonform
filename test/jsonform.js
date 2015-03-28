@@ -1,9 +1,31 @@
 window.jsonform = {};
 
+window.jsonform.helpers = {
+  newField: function(jfObj) {
+    var field, klass;
+    klass = jsonform[jfObj.jfType];
+    if (klass) {
+      field = new jsonform[jfObj.jfType](jfObj);
+      field.jel = $("<div></div>");
+      field.el = field.jel[0];
+      field.changed = function() {
+        return jQuery.event.trigger('jf:change');
+      };
+      return field;
+    } else {
+      return console.error("jsonform field doesnt exist: " + jfObj.jfType);
+    }
+  }
+};
+
 jsonform.AjaxField = (function() {
   function AjaxField() {
     console.log("here");
   }
+
+  AjaxField.prototype.render = function() {};
+
+  AjaxField.prototype.getValue = function() {};
 
   return AjaxField;
 
@@ -11,8 +33,6 @@ jsonform.AjaxField = (function() {
 
 jsonform.BooleanField = (function() {
   function BooleanField(config) {
-    this.jel = $("<div></div>");
-    this.el = this.jel[0];
     this.config = config;
     this.tmpl = JST["fields/boolean"];
   }
@@ -22,11 +42,7 @@ jsonform.BooleanField = (function() {
     return this.jel.find(".chosen-select").chosen({
       disable_search_threshold: 5,
       width: "300px"
-    }).change((function(_this) {
-      return function() {
-        return _this.jel.trigger('jf:change');
-      };
-    })(this));
+    }).change(this.changed);
   };
 
   BooleanField.prototype.getValue = function() {
@@ -37,22 +53,65 @@ jsonform.BooleanField = (function() {
 
 })();
 
+jsonform.FieldCollection = (function() {
+  function FieldCollection(config) {
+    this.config = config;
+    this.tmpl = JST["fields/fieldcollection"];
+    this.jel = $("<div></div>");
+    this.el = this.jel[0];
+    this.fields = [];
+  }
+
+  FieldCollection.prototype.render = function() {
+    this.jel.html(this.tmpl(this.config));
+    return this.jel.find(".jfAdd").click((function(_this) {
+      return function(e) {
+        e.preventDefault();
+        return _this.addOne();
+      };
+    })(this));
+  };
+
+  FieldCollection.prototype.getValue = function() {
+    return _.map(this.fields, function(field) {
+      return field.getValue();
+    });
+  };
+
+  FieldCollection.prototype.addOne = function() {
+    var field, fieldConfig;
+    fieldConfig = _.extend({}, this.config);
+    delete fieldConfig.jfTitle;
+    field = jsonform.helpers.newField(fieldConfig);
+    this.fields.push(field);
+    this.jel.append(field.el);
+    field.render();
+    return field.changed();
+  };
+
+  return FieldCollection;
+
+})();
+
 jsonform.Form = (function() {
   function Form(txtArea, jsonConfig) {
     this.jel = $('<div class="jfForm"></div>');
     this.jtxt = $(txtArea);
+    this.jtxt.hide();
     this.fields = [];
     this.jsonConfig = jsonConfig;
-    this.parseJsonConfig(jsonConfig);
+    this.parseJsonConfig(this.jsonConfig);
     _.each(this.fields, (function(_this) {
       return function(field) {
         _this.jel.append(field.el);
-        field.render();
-        return field.jel.on("jf:change", function() {
-          var json;
-          json = _this.generateJson(_this.jsonConfig);
-          return console.log(json);
-        });
+        return field.render();
+      };
+    })(this));
+    $(document).bind('jf:change', (function(_this) {
+      return function() {
+        var json;
+        json = _this.generateJson(_this.jsonConfig);
+        return _this.jtxt.val(JSON.stringify(json));
       };
     })(this));
     this.jtxt.after(this.jel);
@@ -61,44 +120,50 @@ jsonform.Form = (function() {
   Form.prototype.generateJson = function(obj) {
     var newObj;
     if (_.isArray(obj)) {
-      return _.map(obj, (function(_this) {
-        return function(v) {
-          return _this.generateJson(v);
-        };
-      })(this));
+      if (obj.length === 1 && obj[0].jfField) {
+        return obj[0].jfField.getValue();
+      } else {
+        return _.map(obj, (function(_this) {
+          return function(v) {
+            return _this.generateJson(v);
+          };
+        })(this));
+      }
     } else {
       if (obj.jfField) {
         return obj.jfField.getValue();
       } else {
-        newObj = {};
-        _.each(obj, (function(_this) {
-          return function(v, k) {
-            return newObj[k] = _this.generateJson(v);
-          };
-        })(this));
-        return newObj;
+        if (_.isObject(obj)) {
+          newObj = {};
+          _.each(obj, (function(_this) {
+            return function(v, k) {
+              return newObj[k] = _this.generateJson(v);
+            };
+          })(this));
+          return newObj;
+        } else {
+          return obj;
+        }
       }
     }
   };
 
   Form.prototype.parseJsonConfig = function(obj) {
-    var field, klass;
     if (_.isArray(obj)) {
-      return _.each(obj, (function(_this) {
-        return function(v) {
-          return _this.parseJsonConfig(v);
-        };
-      })(this));
+      if (obj.length === 1 && obj[0].jfType) {
+        obj[0].jfField = new jsonform.FieldCollection(obj[0]);
+        return this.fields.push(obj[0].jfField);
+      } else {
+        return _.each(obj, (function(_this) {
+          return function(v) {
+            return _this.parseJsonConfig(v);
+          };
+        })(this));
+      }
     } else {
-      if (!!obj.jfType) {
-        klass = jsonform[obj.jfType];
-        if (klass) {
-          field = new jsonform[obj.jfType](obj);
-          obj.jfField = field;
-          return this.fields.push(field);
-        } else {
-          return console.error("jsonform field doesnt exist: " + obj.jfType);
-        }
+      if (obj.jfType) {
+        obj.jfField = jsonform.helpers.newField(obj);
+        return this.fields.push(obj.jfField);
       } else {
         return _.each(obj, (function(_this) {
           return function(v, k) {
@@ -130,12 +195,28 @@ var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
 function print() { __p += __j.call(arguments, '') }
 with (obj) {
 
- if(jfTitle) { ;
+ if(typeof(jfTitle)!== 'undefined') { ;
 __p += '<span class="jfTitle">' +
 ((__t = ( jfTitle )) == null ? '' : __t) +
 '</span>';
  } ;
 __p += '\n\n<select class="chosen-select">\n  <option value="true">true</option>\n  <option value="false">false</option>\n</select>';
+
+}
+return __p
+},
+"fields/fieldcollection": function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+with (obj) {
+
+ if(typeof(jfTitle)!== 'undefined') { ;
+__p += '<span class="jfTitle">' +
+((__t = ( jfTitle )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n\n<a href="#" class="jfAdd">+</a>';
 
 }
 return __p

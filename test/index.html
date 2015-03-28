@@ -8,6 +8,15 @@
   <script type="text/javascript" src="underscore.js"></script>
   <script type="text/javascript" src="chosen/chosen.jquery.js"></script>
   <script type="text/javascript" src="jsonform.js"></script>
+
+  <style type="text/css">
+    #test {
+      width: 600px;
+      height: 300px;
+      font-family: Monaco, monospaced;
+      font-size: 13px;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,24 +35,30 @@
         "enabled" : {
           "jfTitle" : "Ideas",
           "jfType" : "BooleanField"
-        }//,
-        //"featured" : [
-        //  {
-        //    "jfType" : "AjaxField",
-        //    "url" : "https://orm-prototype-api.herokuapp.com/posts",
-        //    "urlQuery" : "search",
-        //    "parse" : function(data) {
-        //      _.map(data, function(post) { return [post.uuid, post.title] })
-        //    },
-        //    "max" : 5
-        //  }
-        //]
+        },
+        "featured" : [
+          {
+            "jfTitle" : "Ideas Featured",
+            "jfType" : "BooleanField",
+            "jfMax" : 5
+          }
+          //{
+          //  "jfType" : "AjaxField",
+          //  "jfUrl" : "https://orm-prototype-api.herokuapp.com/posts",
+          //  "jfQueryParam" : "search",
+          //  "jfParse" : function(data) {
+          //    _.map(data, function(post) { return [post.uuid, post.title] })
+          //  },
+          //  "jfMax" : 5
+          //}
+        ]
 
       }
     };
 
     $(function() {
       var jf = new jsonform.Form($("#test")[0], configObject);
+      $("#test").show()
     });
   </script>
 </body>
