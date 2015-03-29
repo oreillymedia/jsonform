@@ -114,7 +114,7 @@ Will show a search box that queries against an API endpoint, and populates the r
   "jfType" : "AjaxField",
   "jfUrl" : "http://my.api", // URL for API endpoint
   "jfSearchParam" : "search", // query param to use for search query (http://my.api?search=QUERY)
-  "jfParse" : function(data, vals) { }) // Parse function that received the API response, and should return an array of [value, label] for the select box. Takes an optional parameter with single values from existing JSON, to use for sorting. Look in test/index.html for an example. 
+  "jfParse" : function(data, vals) { }) // Parse function that receives the API response. Should return an array of [value, label] arrays for the select box. Takes an optional parameter with single values from existing JSON, to use for sorting. Look in test/index.html for an example. 
   "jfReloadParam" : "uuid[]", // used to populate existing data. A single request will be made with all values set to this array param, and the parse function will be used to populate the fields from the response. Look in test/index.html for an example.
 }
 ```
