@@ -5,6 +5,7 @@ body {
   margin: 20px 0px; }
 
 .jfTitle {
+  font-size: 16px;
   display: block;
   margin-top: 10px;
   margin-bottom: 10px; }
@@ -13,12 +14,12 @@ body {
   display: block;
   margin-top: 10px;
   margin-bottom: 10px;
-  font-size: 14px;
+  font-size: 13px;
   color: #838383;
   letter-spacing: 0.5px;
   font-style: italic; }
 
-.jfBtn {
+a.jfBtn, a.jfBtn:link {
   text-decoration: none;
   color: #282828;
   display: inline-block;

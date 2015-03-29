@@ -25,7 +25,7 @@
   <textarea id="test">
 {
   "ideas": {
-    "enabled": false,
+    "enabled": true,
     "featured": [
       "65bd3630-318b-41af-8b3c-7c0f0bb27843",
       "c79986cd-967e-4efd-a65f-060b20005150",
@@ -39,17 +39,60 @@
       "82a336a9-c3a5-4d6f-a962-9dc83e2aca59"
     ]
   },
+  "learning": {
+    "enabled": true,
+    "featured": [
+      "e5bc131a-e456-4dfc-a477-f96d8cc2f59e",
+      "c794a40b-c239-4270-9cb7-69c5ab8d91b8",
+      "b0c6f45f-cc4f-4c32-9a70-c3c4adc54c70"
+    ],
+    "archive": [
+      "7f56a491-e919-4852-8bb6-94a65006f0dd",
+      "77c5814d-a690-4044-97fc-fc4b26804775",
+      "1a9f875b-c266-4bce-94a1-15799c7a2b5d"
+    ]
+  },
   "shop": {
     "enabled": true,
     "products": [
       "0636920040149.IP",
       "9781783288601.IP",
       "9781783989508.IP",
-      "0636920039563.IP"
+      "0636920039563.IP",
+      "0636920038924.IP",
+      "0636920038696.IP",
+      "0636920038382.IP",
+      "0636920037293.IP",
+      "0636920037057.IP",
+      "0636920036623.IP",
+      "0636920036395.IP",
+      "0636920036180.IP",
+      "0636920026228.IP"
+    ]
+  },
+  "people": {
+    "enabled": true,
+    "featured": [
+      "f4da7790-4f1c-4c01-baae-5c3bce99206f",
+      "e0841b33-3101-4500-b183-4aea28b80ca5",
+      "13f3395c-d767-4dc7-952b-703d1cd162d1"
     ]
   },
   "events": {
-    "event_id": 126
+    "enabled": true,
+    "event_id": 126,
+    "featured": [
+      39726,
+      39741,
+      40025,
+      38976
+    ],
+    "archive": [
+      39167,
+      37852,
+      39169,
+      33714
+    ]
   }
 }
   </textarea>
@@ -57,62 +100,167 @@
   <script type="text/javascript">
 
     var configObject = {
-      "ideas" : {
-        "enabled" : {
-          "jfTitle" : "Ideas",
-          "jfType" : "BooleanField"
+      "ideas": {
+        "enabled": {
+          "jfTitle": "Ideas",
+          "jfType": "BooleanField"
         },
-        "featured" : [
+        "featured": [
           {
-            "jfTitle" : "Ideas featured",
-            "jfType" : "AjaxField",
-            "jfUrl" : "https://orm-prototype-api.herokuapp.com/posts",
-            "jfSearchParam" : "search",
-            "jfReloadParam" : "uuid[]",
-            "jfParse" : function(data) {
-              return _.map(data, function(post) { return [post.uuid, post.title] })
+            "jfTitle": "Ideas featured",
+            "jfType": "AjaxField",
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/posts",
+            "jfSearchParam": "search",
+            "jfReloadParam": "uuid[]",
+            "jfParse": function(data, vals) {
+              if(vals) data = _.sortBy(data, function(p) { return _.indexOf(vals, p.uuid)})
+              return _.map(data, function(p) {
+                return [p.uuid, p.title];
+              });
             },
-            "jfMax" : 5
+            "jfMax": 5
           }
         ],
-        "archive" : [
+        "archive": [
           {
-            "jfTitle" : "Ideas archive",
-            "jfType" : "AjaxField",
-            "jfUrl" : "https://orm-prototype-api.herokuapp.com/posts",
-            "jfSearchParam" : "search",
-            "jfReloadParam" : "uuid[]",
-            "jfParse" : function(data) {
-              return _.map(data, function(post) { return [post.uuid, post.title] })
+            "jfTitle": "Ideas archive",
+            "jfType": "AjaxField",
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/posts",
+            "jfSearchParam": "search",
+            "jfReloadParam": "uuid[]",
+            "jfParse": function(data, vals) {
+              if(vals) data = _.sortBy(data, function(p) { return _.indexOf(vals, p.uuid)})
+              return _.map(data, function(post) {
+                return [post.uuid, post.title];
+              });
             },
-            "jfMax" : 3
+            "jfMax": 3
           }
         ]
       },
-      "shop" : {
-        "enabled" : {
-          "jfTitle" : "Ideas",
-          "jfType" : "BooleanField"
+      "learning": {
+        "enabled": {
+          "jfTitle": "Learning",
+          "jfType": "BooleanField"
         },
-        "products" : [
+        "featured": [
           {
-            "jfTitle" : "Shop products",
-            "jfHelper" : "Input Oracle IP numbers for products to show on this topic page",
-            "jfType" : "StringField"
+            "jfTitle": "Learning featured",
+            "jfType": "AjaxField",
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/posts",
+            "jfSearchParam": "search",
+            "jfReloadParam": "uuid[]",
+            "jfParse": function(data, vals) {
+              if(vals) data = _.sortBy(data, function(p) { return _.indexOf(vals, p.uuid)})
+              return _.map(data, function(post) {
+                return [post.uuid, post.title];
+              });
+            },
+            "jfMax": 5
+          }
+        ],
+        "archive": [
+          {
+            "jfTitle": "Learning archive",
+            "jfType": "AjaxField",
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/posts",
+            "jfSearchParam": "search",
+            "jfReloadParam": "uuid[]",
+            "jfParse": function(data, vals) {
+              if(vals) data = _.sortBy(data, function(p) { return _.indexOf(vals, p.uuid)})
+              return _.map(data, function(post) {
+                return [post.uuid, post.title];
+              });
+            },
+            "jfMax": 3
           }
         ]
       },
-      "events" : {
-        "event_id" : {
-          "jfTitle" : "Event featured",
-          "jfType" : "AjaxField",
-          "jfUrl" : "https://orm-prototype-api.herokuapp.com/events",
-          "jfSearchParam" : "search",
-          "jfReloadParam" : "id[]",
-          "jfParse" : function(data) {
-            return _.map(data, function(event) { return [event.id, event.name] })
+      "shop": {
+        "enabled": {
+          "jfTitle": "Shop",
+          "jfType": "BooleanField"
+        },
+        "products": [
+          {
+            "jfTitle": "Shop products",
+            "jfHelper": "Input Oracle IP numbers for products to show on this topic page",
+            "jfType": "StringField"
           }
-        }
+        ]
+      },
+      "people": {
+        "enabled": {
+          "jfTitle": "People",
+          "jfType": "BooleanField"
+        },
+        "featured": [{
+          "jfTitle": "People featured",
+          "jfType": "AjaxField",
+          "jfUrl": "https://orm-prototype-api.herokuapp.com/talent",
+          "jfSearchParam": "search",
+          "jfReloadParam": "uuid[]",
+          "jfParse": function(data, vals) {
+            if(vals) data = _.sortBy(data, function(t) { return _.indexOf(vals, t.uuid)})
+            return _.map(data, function(t) {
+              return [t.uuid, t.firstname + " " + t.lastname];
+            });
+          },
+          "jfMax": 3
+        }]
+      },
+      "events": {
+        "enabled": {
+          "jfTitle": "People",
+          "jfType": "BooleanField"
+        },
+        "event_id": {
+          "jfTitle": "Event featured",
+          "jfType": "AjaxField",
+          "jfValueType" : "int",
+          "jfUrl": "https://orm-prototype-api.herokuapp.com/events",
+          "jfSearchParam": "search",
+          "jfReloadParam": "id[]",
+          "jfParse": function(data) {
+            return _.map(data, function(event) {
+              return [event.id, event.name];
+            });
+          }
+        },
+        "featured": [
+          {
+            "jfTitle": "Sessions featured",
+            "jfType": "AjaxField",
+            "jfValueType" : "int",
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/talent_sessions",
+            "jfSearchParam": "search",
+            "jfReloadParam": "session_id[]",
+            "jfMax": 4,
+            "jfParse": function(data, vals) {
+              if(vals) data = _.sortBy(data, function(s) { return _.indexOf(vals, s.session_id)})
+              return _.map(data, function(s) {
+                return [s.session_id, s.session_name];
+              });
+            }
+          }
+        ],
+        "archive": [
+          {
+            "jfTitle": "Sessions archive",
+            "jfType": "AjaxField",
+            "jfValueType" : "int",
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/talent_sessions",
+            "jfSearchParam": "search",
+            "jfReloadParam": "session_id[]",
+            "jfMax": 4,
+            "jfParse": function(data, vals) {
+              if(vals) data = _.sortBy(data, function(s) { return _.indexOf(vals, s.session_id)})
+              return _.map(data, function(s) {
+                return [s.session_id, s.session_name];
+              });
+            }
+          }
+        ]
       }
     };
 

@@ -10,7 +10,7 @@ class jsonform.AjaxField
       data: query
       type: 'GET'
       success: (data) =>
-        success(config.jfParse(data))
+        success(config.jfParse(data, vals))
       error: (data) ->
         console.log("error baby")
     )

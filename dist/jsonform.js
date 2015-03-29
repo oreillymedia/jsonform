@@ -1,6 +1,10 @@
 window.jsonform = {};
 
 window.jsonform.helpers = {
+  panic: function(msg) {
+    console.error(msg);
+    return alert(msg);
+  },
   isJsonString: function(str) {
     var e;
     try {
@@ -36,7 +40,7 @@ jsonform.AjaxField = (function() {
       type: 'GET',
       success: (function(_this) {
         return function(data) {
-          return success(config.jfParse(data));
+          return success(config.jfParse(data, vals));
         };
       })(this),
       error: function(data) {
@@ -176,7 +180,7 @@ jsonform.FieldCollection = (function() {
     })(this));
   };
 
-  FieldCollection.prototype.getValue = function() {
+  FieldCollection.prototype.getValues = function() {
     var results;
     results = _.map(this.fields, function(field) {
       return field.getValue();
@@ -297,17 +301,22 @@ jsonform.Form = (function() {
       if (jsonform.helpers.isJsonString(txtval)) {
         this.fillFields(JSON.parse(txtval), this.jsonConfig);
       } else {
-        console.error("Textarea has invalid JSON. jsonform will not work");
-        alert("Textarea has invalid JSON. jsonform will not work");
+        jsonform.helpers.panic("Textarea has invalid JSON. jsonform will not work");
       }
     }
   }
 
   Form.prototype.generateJson = function(obj) {
-    var newObj;
+    var newObj, val, vals;
     if (_.isArray(obj)) {
       if (obj.length === 1 && obj[0].jfCollection) {
-        return obj[0].jfCollection.getValue();
+        vals = obj[0].jfCollection.getValues();
+        if (obj[0].jfCollection.config.jfValueType === "int") {
+          vals = _.map(vals, function(val) {
+            return parseInt(val);
+          });
+        }
+        return vals;
       } else {
         return _.map(obj, (function(_this) {
           return function(v) {
@@ -317,7 +326,11 @@ jsonform.Form = (function() {
       }
     } else {
       if (obj.jfField) {
-        return obj.jfField.getValue();
+        val = obj.jfField.getValue();
+        if (obj.jfField.config.jfValueType === "int") {
+          val = parseInt(val);
+        }
+        return val;
       } else {
         if (_.isObject(obj)) {
           newObj = {};
@@ -363,6 +376,9 @@ jsonform.Form = (function() {
   };
 
   Form.prototype.fillFields = function(obj, jsonConfig) {
+    if (!obj || !jsonConfig) {
+      jsonform.helpers.panic("Existing JSON doesnt match JSON config. Existing: " + JSON.stringify(obj) + ", config: " + JSON.stringify(jsonConfig));
+    }
     if (_.isArray(obj)) {
       if (jsonConfig.length === 1 && jsonConfig[0].jfCollection) {
         return jsonConfig[0].jfCollection.fieldsFromValues(obj);

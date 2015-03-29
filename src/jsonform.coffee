@@ -2,6 +2,10 @@ window.jsonform = {}
 
 window.jsonform.helpers = {
 
+  panic: (msg) ->
+    console.error(msg)
+    alert(msg)
+
   isJsonString: (str) ->
     try
       JSON.parse str
@@ -55,8 +59,7 @@ class jsonform.Form
       if jsonform.helpers.isJsonString(txtval)
         @fillFields(JSON.parse(txtval), @jsonConfig)
       else
-        console.error("Textarea has invalid JSON. jsonform will not work")
-        alert("Textarea has invalid JSON. jsonform will not work")
+        jsonform.helpers.panic("Textarea has invalid JSON. jsonform will not work")
 
   # Recursive.
   generateJson: (obj) ->
@@ -66,13 +69,19 @@ class jsonform.Form
       # if array has single item and it has jfField
       # get values form collection
       if obj.length == 1 && obj[0].jfCollection
-        return obj[0].jfCollection.getValue()
+        vals = obj[0].jfCollection.getValues()
+        if obj[0].jfCollection.config.jfValueType is "int"
+          vals = _.map(vals, (val) -> parseInt(val))
+        return vals
       else
         return _.map(obj, (v) => @generateJson(v))
     else
       # if this object has a jfType
       if obj.jfField
-        return obj.jfField.getValue()
+        val = obj.jfField.getValue()
+        if obj.jfField.config.jfValueType is "int"
+          val = parseInt(val)
+        val
       # else go deeper through the object.
       else
         # if this is an object, loop through and generate
@@ -121,9 +130,11 @@ class jsonform.Form
   # and loads the data into the fields.
   fillFields: (obj, jsonConfig) ->
 
-    # look for fields
-    # find existing values
-    # create fields from these values
+    # basic sanity check to prevent most configuration errors
+    if !obj || !jsonConfig
+      jsonform.helpers.panic(
+        "Existing JSON doesnt match JSON config. Existing: " + JSON.stringify(obj) + ", config: " + JSON.stringify(jsonConfig)
+      )
 
     if _.isArray(obj)
 
