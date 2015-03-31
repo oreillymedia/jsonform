@@ -131,10 +131,8 @@ class jsonform.Form
   fillFields: (obj, jsonConfig) ->
 
     # basic sanity check to prevent most configuration errors
-    if !obj || !jsonConfig
-      jsonform.helpers.panic(
-        "Existing JSON doesnt match JSON config. Existing: " + JSON.stringify(obj) + ", config: " + JSON.stringify(jsonConfig)
-      )
+    if obj is undefined || jsonConfig is undefined
+      jsonform.helpers.panic("Existing JSON doesnt match JSON config.")
 
     if _.isArray(obj)
 

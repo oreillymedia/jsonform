@@ -2,6 +2,10 @@ class jsonform.AjaxField
 
   @findExtraValues: (config, vals, success) ->
 
+    # remove null values
+    vals = _.compact(vals)
+    return if _.isEmpty(vals)
+
     query = {}
     query[config.jfReloadParam] = vals
 

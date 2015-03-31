@@ -32,6 +32,10 @@ window.jsonform.helpers = {
 jsonform.AjaxField = (function() {
   AjaxField.findExtraValues = function(config, vals, success) {
     var query;
+    vals = _.compact(vals);
+    if (_.isEmpty(vals)) {
+      return;
+    }
     query = {};
     query[config.jfReloadParam] = vals;
     return $.ajax({
@@ -376,8 +380,8 @@ jsonform.Form = (function() {
   };
 
   Form.prototype.fillFields = function(obj, jsonConfig) {
-    if (!obj || !jsonConfig) {
-      jsonform.helpers.panic("Existing JSON doesnt match JSON config. Existing: " + JSON.stringify(obj) + ", config: " + JSON.stringify(jsonConfig));
+    if (obj === void 0 || jsonConfig === void 0) {
+      jsonform.helpers.panic("Existing JSON doesnt match JSON config.");
     }
     if (_.isArray(obj)) {
       if (jsonConfig.length === 1 && jsonConfig[0].jfCollection) {
