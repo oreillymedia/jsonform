@@ -30,19 +30,19 @@ class jsonform.AjaxField
     timeout = undefined
 
     @jel.html(@tmpl(@config))
-    @jel.find(".chosen-select")
+    @chosen = @jel.find(".chosen-select")
       .chosen(
         width:"300px"
         allow_single_deselect: true
         no_results_text: 'Searching for'
       )
-      .on('chosen:no_results', (e) =>
-        clearTimeout(timeout)
-        timeout = setTimeout(=>
-          @loadAjax(e)
-        , 800)
-      )
-      .change(jsonform.helpers.changed)
+
+    @chosen.on('chosen:no_results', (e) =>
+      clearTimeout(timeout)
+      timeout = setTimeout(=>
+        @loadAjax(e)
+      , 800)
+    ).change(jsonform.helpers.changed)
 
   getValue: ->
     @jel.find(".chosen-select").val()
@@ -55,7 +55,7 @@ class jsonform.AjaxField
     if !_.isObject(val)
       @constructor.findExtraValues(@config, [val], (newVal) => @setValue(newVal[0]))
     else
-      @jel.find(".chosen-select").html('<option value="'+val[0]+'">'+val[1]+'</option>')
+      @jel.find(".chosen-select").html('<option value></option><option value="'+val[0]+'">'+val[1]+'</option>')
       @jel.find(".chosen-select").val(val[0])
       @jel.find(".chosen-select").trigger("chosen:updated")
 

@@ -64,11 +64,12 @@ jsonform.AjaxField = (function() {
     var timeout;
     timeout = void 0;
     this.jel.html(this.tmpl(this.config));
-    return this.jel.find(".chosen-select").chosen({
+    this.chosen = this.jel.find(".chosen-select").chosen({
       width: "300px",
       allow_single_deselect: true,
       no_results_text: 'Searching for'
-    }).on('chosen:no_results', (function(_this) {
+    });
+    return this.chosen.on('chosen:no_results', (function(_this) {
       return function(e) {
         clearTimeout(timeout);
         return timeout = setTimeout(function() {
@@ -90,7 +91,7 @@ jsonform.AjaxField = (function() {
         };
       })(this));
     } else {
-      this.jel.find(".chosen-select").html('<option value="' + val[0] + '">' + val[1] + '</option>');
+      this.jel.find(".chosen-select").html('<option value></option><option value="' + val[0] + '">' + val[1] + '</option>');
       this.jel.find(".chosen-select").val(val[0]);
       return this.jel.find(".chosen-select").trigger("chosen:updated");
     }
