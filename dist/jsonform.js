@@ -255,7 +255,6 @@ jsonform.FieldCollection = (function() {
 
 jsonform.SelectField = (function() {
   function SelectField(config) {
-    console.log(config);
     this.config = config;
     this.tmpl = JST["fields/select"];
     this.jel = $('<div class="jfField"></div>');
@@ -271,7 +270,7 @@ jsonform.SelectField = (function() {
   };
 
   SelectField.prototype.getValue = function() {
-    return this.jel.find(".chosen-select").val() === "true";
+    return this.jel.find(".chosen-select").val();
   };
 
   SelectField.prototype.setValue = function(val) {

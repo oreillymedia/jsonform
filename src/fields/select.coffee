@@ -1,7 +1,6 @@
 class jsonform.SelectField
 
   constructor: (config) ->
-    console.log config
     @config = config
     @tmpl = JST["fields/select"]
     @jel = $('<div class="jfField"></div>')
@@ -14,7 +13,7 @@ class jsonform.SelectField
       .change(jsonform.helpers.changed)
 
   getValue: ->
-    @jel.find(".chosen-select").val() == "true"
+    @jel.find(".chosen-select").val()
 
   setValue: (val) ->
     @jel.find(".chosen-select").val(val + "")
