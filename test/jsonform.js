@@ -253,6 +253,36 @@ jsonform.FieldCollection = (function() {
 
 })();
 
+jsonform.SelectField = (function() {
+  function SelectField(config) {
+    console.log(config);
+    this.config = config;
+    this.tmpl = JST["fields/select"];
+    this.jel = $('<div class="jfField"></div>');
+    this.el = this.jel[0];
+  }
+
+  SelectField.prototype.render = function() {
+    this.jel.html(this.tmpl(this.config));
+    return this.jel.find(".chosen-select").chosen({
+      disable_search_threshold: 5,
+      width: "300px"
+    }).change(jsonform.helpers.changed);
+  };
+
+  SelectField.prototype.getValue = function() {
+    return this.jel.find(".chosen-select").val() === "true";
+  };
+
+  SelectField.prototype.setValue = function(val) {
+    this.jel.find(".chosen-select").val(val + "");
+    return this.jel.find(".chosen-select").trigger("chosen:updated");
+  };
+
+  return SelectField;
+
+})();
+
 jsonform.StringField = (function() {
   function StringField(config) {
     this.config = config;
@@ -490,6 +520,36 @@ __p += '<span class="jfHelper">' +
 '</span>';
  } ;
 __p += '\n\n<a href="#" class="jfAdd jfBtn">+</a>';
+
+}
+return __p
+},
+"fields/select": function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+with (obj) {
+
+ if(typeof(jfTitle)!== 'undefined') { ;
+__p += '<span class="jfTitle">' +
+((__t = ( jfTitle )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n';
+ if(typeof(jfHelper)!== 'undefined') { ;
+__p += '<span class="jfHelper">' +
+((__t = ( jfHelper )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n\n<select class="chosen-select">\n  ';
+ _.each(jfValues, function(val) { ;
+__p += '\n    <option value="' +
+((__t = ( val[0] )) == null ? '' : __t) +
+'">' +
+((__t = ( val[1] )) == null ? '' : __t) +
+'</option>\n  ';
+ }); ;
+__p += '\n</select>';
 
 }
 return __p

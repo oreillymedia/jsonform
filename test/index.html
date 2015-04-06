@@ -93,6 +93,13 @@
       39169,
       33714
     ]
+  },
+  "testSelect" : {
+    "enabled": true,
+    "position" : "middle",
+    "title" : "My title",
+    "callToAction" : "You should click this",
+    "closeable" : false
   }
 }
   </textarea>
@@ -261,6 +268,29 @@
             }
           }
         ]
+      },
+      "testSelect" : {
+        "enabled": {
+          "jfTitle": "Janrain Enabled",
+          "jfType": "BooleanField"
+        },
+        "position" : {
+          "jfTitle": "Janrain Position",
+          "jfType": "SelectField",
+          "jfValues" : [["overlay", "Overlay"], ["top", "Top"], ["middle", "Middle"], ["bottom", "Bottom"]]
+        },
+        "title" : {
+          "jfTitle": "Janrain Title",
+          "jfType": "StringField"
+        },
+        "callToAction" : {
+          "jfTitle": "Janrain CTA",
+          "jfType": "StringField"
+        },
+        "closeable" : {
+          "jfTitle": "Janrain Closeable",
+          "jfType": "BooleanField"
+        },
       }
     };
 
