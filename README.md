@@ -105,6 +105,17 @@ No specific options. Will show an input text field.
 }
 ```
 
+### SelectField
+
+Will show a select field with options set from `jfValues`.
+
+```js
+{
+  "jfType" : "SelectField",
+  "jfValues" : [["first", "First Item"], ["second", "Second Item"]]
+}
+```
+
 ### AjaxField
 
 Will show a search box that queries against an API endpoint, and populates the results in a dropdown box. It also supports parsing existing data into the dropdown, via the `jfReloadParam`.
