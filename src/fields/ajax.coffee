@@ -48,6 +48,11 @@ class jsonform.AjaxField
   getValue: ->
     @jel.find(".chosen-select").val()
 
+  clearValues: ->
+    @jel.find("select option").remove()
+    @jel.find("select").append("<option value=\"\"></option>")
+    @jel.find(".chosen-select").trigger("chosen:updated")
+
   setValue: (val) ->
 
     # if val is a primitive, we have to load the value to
@@ -67,6 +72,7 @@ class jsonform.AjaxField
     query = {}
     searchVal = chosen.find(".chosen-search input").val()
     query[@config.jfSearchParam] = searchVal
+    @clearValues()
 
     $.ajax(
       url: @config.jfUrl

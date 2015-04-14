@@ -84,6 +84,12 @@ jsonform.AjaxField = (function() {
     return this.jel.find(".chosen-select").val();
   };
 
+  AjaxField.prototype.clearValues = function() {
+    this.jel.find("select option").remove();
+    this.jel.find("select").append("<option value=\"\"></option>");
+    return this.jel.find(".chosen-select").trigger("chosen:updated");
+  };
+
   AjaxField.prototype.setValue = function(val) {
     if (!_.isObject(val)) {
       return this.constructor.findExtraValues(this.config, [val], (function(_this) {
@@ -104,6 +110,7 @@ jsonform.AjaxField = (function() {
     query = {};
     searchVal = chosen.find(".chosen-search input").val();
     query[this.config.jfSearchParam] = searchVal;
+    this.clearValues();
     return $.ajax({
       url: this.config.jfUrl,
       data: query,
