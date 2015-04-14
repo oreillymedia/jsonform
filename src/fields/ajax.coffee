@@ -36,13 +36,14 @@ class jsonform.AjaxField
         allow_single_deselect: true
         no_results_text: 'Searching for'
       )
-
-    @chosen.on('chosen:no_results', (e) =>
+    @jel.find(".chosen-search input").on('input', (e) =>
       clearTimeout(timeout)
       timeout = setTimeout(=>
         @loadAjax(e)
       , 800)
-    ).change(jsonform.helpers.changed)
+    )
+
+    @chosen.change(jsonform.helpers.changed)
 
   getValue: ->
     @jel.find(".chosen-select").val()

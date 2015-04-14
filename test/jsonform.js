@@ -69,14 +69,15 @@ jsonform.AjaxField = (function() {
       allow_single_deselect: true,
       no_results_text: 'Searching for'
     });
-    return this.chosen.on('chosen:no_results', (function(_this) {
+    this.jel.find(".chosen-search input").on('input', (function(_this) {
       return function(e) {
         clearTimeout(timeout);
         return timeout = setTimeout(function() {
           return _this.loadAjax(e);
         }, 800);
       };
-    })(this)).change(jsonform.helpers.changed);
+    })(this));
+    return this.chosen.change(jsonform.helpers.changed);
   };
 
   AjaxField.prototype.getValue = function() {
