@@ -26,7 +26,17 @@
   "single": {
     "type" : "person",
     "uuid" : "773bee65-8f13-bf94-f7b9-ac96e27c7bc7"
-  }
+  },
+  "many": [
+    {
+      "type" : "post",
+      "uuid" : "0c55c2f0-14c2-44e8-bd51-4796e6586944"
+    },
+    {
+      "type" : "person",
+      "uuid" : "773bee65-8f13-bf94-f7b9-ac96e27c7bc7"
+    }
+  ]
 }
   </textarea>
 
@@ -45,7 +55,7 @@
             "jfSearchParam": "search",
             "jfReloadParam": "uuid[]",
             "jfParse": function(data, vals) {
-              if(data && data.length == 0) return
+              if(!data || data.length == 0) return []
               return [[data[0].uuid, data[0].title]]
             }
           },
@@ -55,12 +65,40 @@
             "jfSearchParam": "search",
             "jfReloadParam": "uuid[]",
             "jfParse": function(data, vals) {
-              if(data && data.length == 0) return
+              if(!data || data.length == 0) return []
               return [[data[0].uuid, data[0].firstname + " " + data[0].lastname]]
             }
           }
         ]
-      }
+      },
+      "many": [{
+        "jfTitle": "Single",
+        "jfType": "SelectAjaxField",
+        "jfSelectKey" : "type",
+        "jfAjaxKey" : "uuid",
+        "jfValues" : [
+          {
+            "jfValue" : ["post", "Post"],
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/posts",
+            "jfSearchParam": "search",
+            "jfReloadParam": "uuid[]",
+            "jfParse": function(data, vals) {
+              if(!data || data.length == 0) return []
+              return [[data[0].uuid, data[0].title]]
+            }
+          },
+          {
+            "jfValue" : ["person", "Person"],
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/talent",
+            "jfSearchParam": "search",
+            "jfReloadParam": "uuid[]",
+            "jfParse": function(data, vals) {
+              if(!data || data.length == 0) return []
+              return [[data[0].uuid, data[0].firstname + " " + data[0].lastname]]
+            }
+          }
+        ]
+      }]
     };
 
     $(function() {

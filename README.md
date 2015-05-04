@@ -130,5 +130,9 @@ Will show a search box that queries against an API endpoint, and populates the r
 }
 ```
 
+### SelectAjaxField
+
+Will show a select dropdown box, and whenever a value is selected, an ajaxfield below that searches a specific endpoint. This makes it possible to make a fields where the user first selects the type of API endpoint, and then searches for a specific object in that endpoint. See examples for more info.
+
 
 
