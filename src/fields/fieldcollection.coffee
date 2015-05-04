@@ -38,7 +38,7 @@ class jsonform.FieldCollection
     @jel.append(field.el)
     field.render()
 
-    if defaultValue
+    if !_.isUndefined(defaultValue)
       field.setValue(defaultValue)
 
     # delete button

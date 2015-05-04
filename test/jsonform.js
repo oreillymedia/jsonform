@@ -210,7 +210,7 @@ jsonform.FieldCollection = (function() {
     this.fields.push(field);
     this.jel.append(field.el);
     field.render();
-    if (defaultValue) {
+    if (!_.isUndefined(defaultValue)) {
       field.setValue(defaultValue);
     }
     del = $(this.deltmpl());

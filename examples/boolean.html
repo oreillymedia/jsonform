@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>JSON Form test</title>
+
+  <script type="text/javascript" src="/examples/javascripts/jquery.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/underscore.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/chosen/chosen.jquery.js"></script>
+  <link rel="stylesheet" href="/examples/javascripts/chosen/chosen.css">
+  <script type="text/javascript" src="/dist/jsonform.js"></script>
+  <link rel="stylesheet" href="/dist/jsonform.css">
+
+  <style type="text/css">
+    #test {
+      width: 600px;
+      height: 300px;
+      font-family: Monaco, monospaced;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>JSON Form test</h2>
+
+  <textarea id="test">{
+  "single": true,
+  "many": [ true, false, true ]
+}
+  </textarea>
+
+  <script type="text/javascript">
+
+    var configObject = {
+      "single": {
+        "jfTitle": "Single boolean",
+        "jfType": "BooleanField"
+      },
+      "many": [
+        {
+          "jfTitle": "Many booleans",
+          "jfType": "BooleanField",
+          "jfMax": 5
+        }
+      ]
+    };
+
+    $(function() {
+      var jf = new jsonform.Form($("#test")[0], configObject);
+      $("#test").show()
+    });
+  </script>
+</body>
+</html>

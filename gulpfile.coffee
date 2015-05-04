@@ -34,6 +34,5 @@ gulp.task "build", ->
 gulp.task "server", ["build"], ->
   connect.server
     port: 8002
-    root: 'test'
-    fallback: 'test/index.html'
+    fallback: 'examples/index.html'
   gulp.watch(['src/**/*.coffee', 'src/**/*.jst', 'src/**/*.scss'], ['build'])
