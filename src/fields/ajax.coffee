@@ -59,11 +59,14 @@ class jsonform.AjaxField
     # use as label in the select box. This happens only on single
     # fields where setValue is called from lib.
     if !_.isObject(val)
-      @constructor.findExtraValues(@config, [val], (newVal) => @setValue(newVal[0]))
+      @constructor.findExtraValues(@config, [val], (newVal) =>
+        @setValue(newVal[0])
+      )
     else
       @jel.find(".chosen-select").html('<option value></option><option value="'+val[0]+'">'+val[1]+'</option>')
       @jel.find(".chosen-select").val(val[0])
       @jel.find(".chosen-select").trigger("chosen:updated")
+      jsonform.helpers.changed()
 
   loadAjax: (e) ->
 

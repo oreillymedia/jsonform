@@ -1,0 +1,72 @@
+<html>
+<head>
+  <title>JSON Form test</title>
+
+  <script type="text/javascript" src="/examples/javascripts/jquery.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/underscore.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/chosen/chosen.jquery.js"></script>
+  <link rel="stylesheet" href="/examples/javascripts/chosen/chosen.css">
+  <script type="text/javascript" src="/dist/jsonform.js"></script>
+  <link rel="stylesheet" href="/dist/jsonform.css">
+
+  <style type="text/css">
+    #test {
+      width: 600px;
+      height: 300px;
+      font-family: Monaco, monospaced;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>JSON Form test</h2>
+
+  <textarea id="test">{
+  "single": {
+    "type" : "person",
+    "uuid" : "773bee65-8f13-bf94-f7b9-ac96e27c7bc7"
+  }
+}
+  </textarea>
+
+  <script type="text/javascript">
+
+    var configObject = {
+      "single": {
+        "jfTitle": "Single",
+        "jfType": "SelectAjaxField",
+        "jfSelectKey" : "type",
+        "jfAjaxKey" : "uuid",
+        "jfValues" : [
+          {
+            "jfValue" : ["post", "Post"],
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/posts",
+            "jfSearchParam": "search",
+            "jfReloadParam": "uuid[]",
+            "jfParse": function(data, vals) {
+              if(data && data.length == 0) return
+              return [[data[0].uuid, data[0].title]]
+            }
+          },
+          {
+            "jfValue" : ["person", "Person"],
+            "jfUrl": "https://orm-prototype-api.herokuapp.com/talent",
+            "jfSearchParam": "search",
+            "jfReloadParam": "uuid[]",
+            "jfParse": function(data, vals) {
+              if(data && data.length == 0) return
+              return [[data[0].uuid, data[0].firstname + " " + data[0].lastname]]
+            }
+          }
+        ]
+      }
+    };
+
+    $(function() {
+      var jf = new jsonform.Form($("#test")[0], configObject);
+      $("#test").show()
+    });
+  </script>
+</body>
+</html>

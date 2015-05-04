@@ -100,7 +100,8 @@ jsonform.AjaxField = (function() {
     } else {
       this.jel.find(".chosen-select").html('<option value></option><option value="' + val[0] + '">' + val[1] + '</option>');
       this.jel.find(".chosen-select").val(val[0]);
-      return this.jel.find(".chosen-select").trigger("chosen:updated");
+      this.jel.find(".chosen-select").trigger("chosen:updated");
+      return jsonform.helpers.changed();
     }
   };
 
@@ -274,7 +275,12 @@ jsonform.SelectField = (function() {
     return this.jel.find(".chosen-select").chosen({
       disable_search_threshold: 5,
       width: "300px"
-    }).change(jsonform.helpers.changed);
+    }).change((function(_this) {
+      return function() {
+        _this.jel.trigger("jf:changed");
+        return jsonform.helpers.changed();
+      };
+    })(this));
   };
 
   SelectField.prototype.getValue = function() {
@@ -287,6 +293,69 @@ jsonform.SelectField = (function() {
   };
 
   return SelectField;
+
+})();
+
+jsonform.SelectAjaxField = (function() {
+  function SelectAjaxField(config) {
+    this.config = config;
+    this.jel = $('<div class="jfField"></div>');
+    this.el = this.jel[0];
+    this.selectField = new jsonform.SelectField({
+      jfValues: _.map(this.config.jfValues, function(val) {
+        return val.jfValue;
+      })
+    });
+    this.ajaxField = new jsonform.AjaxField(this.config.jfValues[0]);
+  }
+
+  SelectAjaxField.prototype.render = function() {
+    this.jel.html("");
+    this.jel.append(this.selectField.el);
+    this.jel.append(this.ajaxField.el);
+    this.selectField.render();
+    this.ajaxField.render();
+    return this.selectField.jel.on("jf:changed", (function(_this) {
+      return function() {
+        return _this.selectSwitched();
+      };
+    })(this));
+  };
+
+  SelectAjaxField.prototype.getValue = function() {
+    var val;
+    val = {};
+    val[this.config.jfSelectKey] = this.selectField.getValue();
+    val[this.config.jfAjaxKey] = this.ajaxField.getValue();
+    return val;
+  };
+
+  SelectAjaxField.prototype.setValue = function(val) {
+    var ajaxConfig;
+    this.selectField.setValue(val[this.config.jfSelectKey]);
+    ajaxConfig = this.getConfigBySelectKey(this.selectField.getValue());
+    return jsonform.AjaxField.findExtraValues(ajaxConfig, [val[this.config.jfAjaxKey]], (function(_this) {
+      return function(data) {
+        _this.ajaxField.config = ajaxConfig;
+        return _this.ajaxField.setValue(data[0]);
+      };
+    })(this));
+  };
+
+  SelectAjaxField.prototype.selectSwitched = function() {
+    var ajaxConfig;
+    ajaxConfig = this.getConfigBySelectKey(this.selectField.getValue());
+    this.ajaxField.config = ajaxConfig;
+    return this.ajaxField.setValue(["", ""]);
+  };
+
+  SelectAjaxField.prototype.getConfigBySelectKey = function(key) {
+    return _.find(this.config.jfValues, function(conf) {
+      return conf.jfValue[0] === key;
+    });
+  };
+
+  return SelectAjaxField;
 
 })();
 
@@ -554,6 +623,36 @@ __p += '\n    <option value="' +
 ((__t = ( val[0] )) == null ? '' : __t) +
 '">' +
 ((__t = ( val[1] )) == null ? '' : __t) +
+'</option>\n  ';
+ }); ;
+__p += '\n</select>';
+
+}
+return __p
+},
+"fields/selectajax": function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
+function print() { __p += __j.call(arguments, '') }
+with (obj) {
+
+ if(typeof(jfTitle)!== 'undefined') { ;
+__p += '<span class="jfTitle">' +
+((__t = ( jfTitle )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n';
+ if(typeof(jfHelper)!== 'undefined') { ;
+__p += '<span class="jfHelper">' +
+((__t = ( jfHelper )) == null ? '' : __t) +
+'</span>';
+ } ;
+__p += '\n\n<select class="chosen-select">\n  ';
+ _.each(jfValues, function(val) { ;
+__p += '\n    <option value="' +
+((__t = ( val.jfValue[0] )) == null ? '' : __t) +
+'">' +
+((__t = ( val.jfValue[1] )) == null ? '' : __t) +
 '</option>\n  ';
  }); ;
 __p += '\n</select>';

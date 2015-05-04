@@ -20,14 +20,34 @@
 </head>
 <body>
 
-  <h2>JSON Form Examples</h2>
+  <h2>JSON Form test</h2>
 
-  <ul>
-    <li><a href="examples/boolean.html">Boolean Field</a></li>
-    <li><a href="examples/string.html">String Field</a></li>
-    <li><a href="examples/ajax.html">Ajax Field</a></li>
-    <li><a href="examples/select.html">Select Field</a></li>
-  </ul>
+  <textarea id="test">{
+  "single": "Rune Madsen",
+  "many": [ "Steve Klise", "Zach Schwartz", "Martin Bravo", "Fred Chasen" ]
+}
+  </textarea>
 
+  <script type="text/javascript">
+
+    var configObject = {
+      "single": {
+        "jfTitle": "Single string",
+        "jfType": "StringField"
+      },
+      "many": [
+        {
+          "jfTitle": "Many strings",
+          "jfType": "StringField",
+          "jfMax": 5
+        }
+      ]
+    };
+
+    $(function() {
+      var jf = new jsonform.Form($("#test")[0], configObject);
+      $("#test").show()
+    });
+  </script>
 </body>
 </html>
