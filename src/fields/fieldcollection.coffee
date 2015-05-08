@@ -4,6 +4,7 @@ class jsonform.FieldCollection
     @config = config
     @tmpl = JST["fields/fieldcollection"]
     @deltmpl = JST["fields/fieldcollection-del"]
+    @sorttmpl = JST["fields/fieldcollection-sort"]
     @jel = $("<div></div>")
     @el = @jel[0]
     @fields = []
@@ -17,6 +18,22 @@ class jsonform.FieldCollection
       e.preventDefault()
       @addOne()
     )
+
+    if $().sortable
+      @jel.find(".jfCollection").sortable(
+        placeholder: '<span class="placeholder">&nbsp;</span>'
+        itemSelector: '.jfField'
+        handle: 'i.jfSort'
+        onDrop: (item, container, _super) =>
+          _super(item, container)
+
+          # sort by what number of child the el is
+          @fields = _.sortBy(@fields, (field) ->
+            field.jel.index()
+          )
+
+          jsonform.helpers.changed()
+      )
 
   getValues: ->
     results = _.map(@fields, (field) -> field.getValue())
@@ -35,11 +52,15 @@ class jsonform.FieldCollection
 
     # first append field elements so they are a part of the dom
     # this makes is possible for them to instantiate chosen in render
-    @jel.append(field.el)
+    @jel.find(".jfCollection").append(field.el)
     field.render()
 
     if !_.isUndefined(defaultValue)
       field.setValue(defaultValue)
+
+    # if sortable, add sort handle
+    if $().sortable
+      field.jel.prepend(@sorttmpl())
 
     # delete button
     del = $(@deltmpl())
@@ -55,6 +76,10 @@ class jsonform.FieldCollection
 
     # check if we hide or show the add button
     @checkAddState()
+
+    # update sortable
+    if $().sortable
+      @jel.find(".jfCollection").sortable("refresh")
 
     # call changed to update json
     jsonform.helpers.changed()

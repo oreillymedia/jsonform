@@ -17,3 +17,46 @@
   line-height: 20px;
 }
 
+.jfSort {
+  color: #282828;
+  display: inline-block;
+  background-color: #F7F7F7;
+  text-align: center;
+  border: 1px solid #999;
+  padding: 3px 5px;
+  vertical-align: top;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+// Draggable
+
+body.dragging, body.dragging * {
+  cursor: move !important;
+}
+
+.dragged {
+  position: absolute;
+  opacity: 0.5;
+  z-index: 2000;
+}
+
+div.jfCollection .placeholder {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: none;
+  &:before {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 0;
+    margin-top: -5px;
+    left: -5px;
+    top: -4px;
+    border: 5px solid transparent;
+    border-left-color: red;
+    border-right: none;
+  }
+}
+

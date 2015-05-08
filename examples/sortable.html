@@ -1,0 +1,61 @@
+<html>
+<head>
+  <title>JSON Form test</title>
+
+  <script type="text/javascript" src="/examples/javascripts/jquery.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/jquery.sortable.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/underscore.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/chosen/chosen.jquery.js"></script>
+  <link rel="stylesheet" href="/examples/javascripts/chosen/chosen.css">
+  <script type="text/javascript" src="/dist/jsonform.js"></script>
+  <link rel="stylesheet" href="/dist/jsonform.css">
+
+  <style type="text/css">
+    #test {
+      width: 600px;
+      height: 300px;
+      font-family: Monaco, monospaced;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>JSON Form test</h2>
+
+  <textarea id="test">{
+  "many": [
+    "65bd3630-318b-41af-8b3c-7c0f0bb27843",
+    "c79986cd-967e-4efd-a65f-060b20005150",
+    "c5e1a6d4-2f8c-43cc-a1ee-277b769079ce"
+  ]
+}
+  </textarea>
+
+  <script type="text/javascript">
+
+    var configObject = {
+      "many": [
+        {
+          "jfTitle": "Many Ajax",
+          "jfType": "AjaxField",
+          "jfUrl": "https://orm-prototype-api.herokuapp.com/posts",
+          "jfSearchParam": "search",
+          "jfReloadParam": "uuid[]",
+          "jfParse": function(data, vals) {
+            if(vals) data = _.sortBy(data, function(p) { return _.indexOf(vals, p.uuid)})
+            return _.map(data, function(p) {
+              return [p.uuid, p.title];
+            });
+          }
+        }
+      ]
+    };
+
+    $(function() {
+      var jf = new jsonform.Form($("#test")[0], configObject);
+      $("#test").show()
+    });
+  </script>
+</body>
+</html>

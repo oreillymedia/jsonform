@@ -176,6 +176,7 @@ jsonform.FieldCollection = (function() {
     this.config = config;
     this.tmpl = JST["fields/fieldcollection"];
     this.deltmpl = JST["fields/fieldcollection-del"];
+    this.sorttmpl = JST["fields/fieldcollection-sort"];
     this.jel = $("<div></div>");
     this.el = this.jel[0];
     this.fields = [];
@@ -183,7 +184,7 @@ jsonform.FieldCollection = (function() {
 
   FieldCollection.prototype.render = function() {
     this.jel.html(this.tmpl(this.config));
-    return this.jel.find(".jfAdd").click((function(_this) {
+    this.jel.find(".jfAdd").click((function(_this) {
       return function(e) {
         if ($(_this).is("[disabled]")) {
           return;
@@ -192,6 +193,22 @@ jsonform.FieldCollection = (function() {
         return _this.addOne();
       };
     })(this));
+    if ($().sortable) {
+      return this.jel.find(".jfCollection").sortable({
+        placeholder: '<span class="placeholder">&nbsp;</span>',
+        itemSelector: '.jfField',
+        handle: 'i.jfSort',
+        onDrop: (function(_this) {
+          return function(item, container, _super) {
+            _super(item, container);
+            _this.fields = _.sortBy(_this.fields, function(field) {
+              return field.jel.index();
+            });
+            return jsonform.helpers.changed();
+          };
+        })(this)
+      });
+    }
   };
 
   FieldCollection.prototype.getValues = function() {
@@ -209,10 +226,13 @@ jsonform.FieldCollection = (function() {
     delete fieldConfig.jfHelper;
     field = jsonform.helpers.newField(fieldConfig);
     this.fields.push(field);
-    this.jel.append(field.el);
+    this.jel.find(".jfCollection").append(field.el);
     field.render();
     if (!_.isUndefined(defaultValue)) {
       field.setValue(defaultValue);
+    }
+    if ($().sortable) {
+      field.jel.prepend(this.sorttmpl());
     }
     del = $(this.deltmpl());
     field.jel.append(del);
@@ -227,6 +247,9 @@ jsonform.FieldCollection = (function() {
       };
     })(this));
     this.checkAddState();
+    if ($().sortable) {
+      this.jel.find(".jfCollection").sortable("refresh");
+    }
     return jsonform.helpers.changed();
   };
 
@@ -578,6 +601,15 @@ __p += '<a href="#" class="jfDel jfBtn">-</a>';
 }
 return __p
 },
+"fields/fieldcollection-sort": function(obj) {
+obj || (obj = {});
+var __t, __p = '', __e = _.escape;
+with (obj) {
+__p += '<i class="jfSort">&#8597;</i>';
+
+}
+return __p
+},
 "fields/fieldcollection": function(obj) {
 obj || (obj = {});
 var __t, __p = '', __e = _.escape, __j = Array.prototype.join;
@@ -595,7 +627,7 @@ __p += '<span class="jfHelper">' +
 ((__t = ( jfHelper )) == null ? '' : __t) +
 '</span>';
  } ;
-__p += '\n\n<a href="#" class="jfAdd jfBtn">+</a>';
+__p += '\n\n<a href="#" class="jfAdd jfBtn">+</a>\n\n<div class="jfCollection"></div>';
 
 }
 return __p
