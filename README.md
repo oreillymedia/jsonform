@@ -72,6 +72,10 @@ If the textarea has existing JSON data, and that data matches the schema of the 
 
 Look in `test/index.html` for a more complicated JSON config structure.
 
+## Optional Configuration
+
+If you want the collection fields to be sortable, you just need to add `jquery.sortable` to the page. See `/examples/sortable.html` for an example.
+
 ## Field parameters
 
 There's a number of fields in this library, each of them with specific parameters. These params apply to all fields:
