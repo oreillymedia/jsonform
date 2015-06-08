@@ -66,7 +66,7 @@ class jsonform.Form
 
     if _.isArray(obj)
 
-      # if array has single item and it has jfField
+      # if array has single item and it has jfCollection
       # get values form collection
       if obj.length == 1 && obj[0].jfCollection
         vals = obj[0].jfCollection.getValues()
@@ -101,9 +101,9 @@ class jsonform.Form
 
     if _.isArray(obj)
 
-      # if array has single item and it has jfType
+      # if array has single item and it has jfCollection
       # convert it to a fieldcollection
-      if obj.length == 1 && obj[0].jfType
+      if obj.length == 1 && obj[0].jfCollection
         obj[0].jfCollection = new jsonform.FieldCollection(obj[0])
         @fields.push(obj[0].jfCollection)
 

@@ -1,3 +1,7 @@
+.jfCollectionItem .jfField {
+  display: inline-block;
+}
+
 .jfAdd {
   width: 30px;
   height: 30px;
@@ -18,6 +22,7 @@
 }
 
 .jfSort {
+  margin-right: 5px;
   color: #282828;
   display: inline-block;
   background-color: #F7F7F7;

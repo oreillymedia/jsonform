@@ -1,0 +1,88 @@
+<html>
+<head>
+  <title>JSON Form test</title>
+
+  <script type="text/javascript" src="/examples/javascripts/jquery.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/underscore.js"></script>
+  <script type="text/javascript" src="/examples/javascripts/chosen/chosen.jquery.js"></script>
+  <link rel="stylesheet" href="/examples/javascripts/chosen/chosen.css">
+  <script type="text/javascript" src="/dist/jsonform.js"></script>
+  <link rel="stylesheet" href="/dist/jsonform.css">
+
+  <style type="text/css">
+    #test {
+      width: 600px;
+      height: 300px;
+      font-family: Monaco, monospaced;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>JSON Form test</h2>
+
+  <textarea id="test">{
+  "single": {
+    "firstname" : "Rune",
+    "lastname" : "Madsen"
+  },
+  "many" : [
+    {
+      "firstname": "Steve",
+      "lastname": "Klise"
+    },
+    {
+      "firstname": "Zach",
+      "lastname": "Schwartz"
+    },
+    {
+      "firstname": "Martin",
+      "lastname": "Bravo"
+    },
+    {
+      "firstname": "Fred",
+      "lastname": "Chasen"
+    }
+  ]
+}
+  </textarea>
+
+  <script type="text/javascript">
+
+    var configObject = {
+      "single" : {
+        "firstname" : {
+          // it's a little annoying that we have to put the "single"
+          // heading inside the first property of "single".
+          "jfTitle": "One object",
+          "jfHelper" : "Firstname",
+          "jfType": "StringField"
+        },
+        "lastname" : {
+          "jfHelper" : "Lastname",
+          "jfType": "StringField"
+        }
+      },
+      "many" : [{
+        "jfCollection" : true,
+        "jfTitle": "Many objects",
+        "jfMax" : 5,
+        "firstname" : {
+          "jfHelper" : "Firstname",
+          "jfType": "StringField"
+        },
+        "lastname" : {
+          "jfHelper" : "Lastname",
+          "jfType": "StringField"
+        }
+      }]
+    };
+
+    $(function() {
+      var jf = new jsonform.Form($("#test")[0], configObject);
+      $("#test").show()
+    });
+  </script>
+</body>
+</html>

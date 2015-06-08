@@ -3,11 +3,12 @@ class jsonform.FieldCollection
   constructor: (config) ->
     @config = config
     @tmpl = JST["fields/fieldcollection"]
-    @deltmpl = JST["fields/fieldcollection-del"]
-    @sorttmpl = JST["fields/fieldcollection-sort"]
     @jel = $("<div></div>")
     @el = @jel[0]
-    @fields = []
+
+    # Array that itself holds an array of fields. This makes
+    # the field collection work for a single field or a set of fields.
+    @items = []
 
   render: ->
 
@@ -16,19 +17,20 @@ class jsonform.FieldCollection
     @jel.find(".jfAdd").click( (e) =>
       return if $(this).is("[disabled]")
       e.preventDefault()
-      @addOne()
+      @addItem()
     )
 
     if $().sortable
       @jel.find(".jfCollection").sortable(
         placeholder: '<span class="placeholder">&nbsp;</span>'
-        itemSelector: '.jfField'
+        itemSelector: '.jfCollectionItem'
         handle: 'i.jfSort'
         onDrop: (item, container, _super) =>
           _super(item, container)
 
+          # FIELD COLLECTION ITEM HERE.
           # sort by what number of child the el is
-          @fields = _.sortBy(@fields, (field) ->
+          @items = _.sortBy(@items, (field) ->
             field.jel.index()
           )
 
@@ -36,10 +38,10 @@ class jsonform.FieldCollection
       )
 
   getValues: ->
-    results = _.map(@fields, (field) -> field.getValue())
-    _.compact(results)
+    results = _.map(@items, (item) -> item.getValue())
+    _.without(results, "", undefined, null)
 
-  addOne: (defaultValue) ->
+  addItem: (defaultValue) ->
 
     # remove some values that are meant for the
     # collection.
@@ -47,29 +49,17 @@ class jsonform.FieldCollection
     delete fieldConfig.jfTitle
     delete fieldConfig.jfHelper
     field = jsonform.helpers.newField(fieldConfig)
+    # field
 
-    @fields.push(field)
+    item = new jsonform.FieldCollectionItem(@config, defaultValue)
+    @jel.find(".jfCollection").append(item.el)
+    item.render()
+    @items.push(item)
 
-    # first append field elements so they are a part of the dom
-    # this makes is possible for them to instantiate chosen in render
-    @jel.find(".jfCollection").append(field.el)
-    field.render()
-
-    if !_.isUndefined(defaultValue)
-      field.setValue(defaultValue)
-
-    # if sortable, add sort handle
-    if $().sortable
-      field.jel.prepend(@sorttmpl())
-
-    # delete button
-    del = $(@deltmpl())
-    field.jel.append(del)
-    del.click( (e) =>
-      e.preventDefault()
-      del.remove()
-      field.jel.remove()
-      @fields = _.without(@fields, field)
+    # listen for click on del
+    item.jel.on("delete_clicked", (e, item) =>
+      item.jel.remove()
+      @items = _.without(@items, item)
       @checkAddState()
       jsonform.helpers.changed()
     )
@@ -86,19 +76,28 @@ class jsonform.FieldCollection
 
   fieldsFromValues: (vals) ->
 
-    # if this field needs extra values for setvalue,
-    # call the function. This is mostly for select boxes
-    # where we also need the label besides the value
-    if jsonform[@config.jfType].findExtraValues
-      jsonform[@config.jfType].findExtraValues(@config, vals, (vals) =>
-        _.each(vals, (val) => @addOne(val))
-      )
+    # if the config has a jfType in the root object, it means
+    # that each array item is a single value.
+    if @config.jfType
+
+      # if this field needs extra values for setvalue,
+      # call the function. This is mostly for select boxes
+      # where we also need the label besides the value
+      if jsonform[@config.jfType].findExtraValues
+        jsonform[@config.jfType].findExtraValues(@config, vals, (vals) =>
+          _.each(vals, (val) => @addItem(val))
+        )
+      else
+        _.each(vals, (val) => @addItem(val))
+
+    # if it doesn't have a jfType, each array item will have multiple
+    # values.
     else
-      _.each(vals, (val) => @addOne(val))
+      console.log vals
 
   checkAddState: ->
     if @config.jfMax
-      if @fields.length >= @config.jfMax
+      if @items.length >= @config.jfMax
         @jel.find(".jfAdd").attr("disabled", "disabled")
       else
         @jel.find(".jfAdd").removeAttr("disabled")
