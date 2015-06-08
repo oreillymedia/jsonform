@@ -1,23 +1,45 @@
 class jsonform.FieldCollectionItem
 
-  constructor: (config, defaultValue) ->
+  constructor: (config, jsonValue) ->
 
-    @defaultValue = defaultValue
+    @jsonValue = jsonValue
     @deltmpl = JST["fields/fieldcollection-del"]
     @sorttmpl = JST["fields/fieldcollection-sort"]
     @jel = $('<div class="jfCollectionItem"></div>')
     @el = @jel[0]
     @fields = []
 
-    # THIS SHOULD CHECK FOR MULTIPLE FIELDS
-    # remove some values that are meant for the
-    # collection.
-    fieldConfig = _.extend({}, config)
-    delete fieldConfig.jfTitle
-    delete fieldConfig.jfHelper
+    @config = {}
+    jQuery.extend(true, @config, config)
+    delete @config.jfTitle
+    delete @config.jfHelper
+    delete @config.jfCollection
+    delete @config.jfMax
 
-    @fields.push jsonform.helpers.newField(fieldConfig)
+    # if there is a jfType on the root config object,
+    # this will be a collection holding only single values:
+    # [1, 2, 3, 4]
+    if config.jfType
+      @fields.push jsonform.helpers.newField(@config)
 
+    # otherwise it will be a collection where each collection
+    # item has a number of fields that become objects in the output:
+    # [{..}, {..}, {..}]
+    else
+      _.each(@config, (v, k) =>
+        if v.jfType
+          field = jsonform.helpers.newField(v)
+          v.jfField = field
+          @fields.push field
+      )
+
+
+    # ALSO FIND EXTRA VALUES. SHOULD BE RENAMED PRELOAD.
+    #if jsonform[@config.jfType].findExtraValues
+    #    jsonform[@config.jfType].findExtraValues(@config, vals, (vals) =>
+    #      _.each(vals, (val) => @addItem(val))
+    #    )
+    #  else
 
   render: ->
 
@@ -30,13 +52,9 @@ class jsonform.FieldCollectionItem
       field.render()
     )
 
-    # THIS SHOULD WORK WITH MORE THAN ONE FIELD.
-    if !_.isUndefined(@defaultValue)
-      @fields[0].setValue(@defaultValue)
-
     # if sortable, add sort handle
     if $().sortable
-      @jel.prepend(@sorttmpl())
+      @jel.append(@sorttmpl())
 
     # delete button
     del = $(@deltmpl())
@@ -46,7 +64,33 @@ class jsonform.FieldCollectionItem
      @jel.trigger("delete_clicked", @)
     )
 
+    # If we have values to set.
+    if !_.isUndefined(@jsonValue)
+
+      # if this is just a single field
+      if @config.jfType
+        @fields[0].setValue(@jsonValue)
+
+      # otherwise loop through json values and
+      # assign to fields.
+      else
+        _.each(@config, (v, k) =>
+          if v.jfField && @jsonValue[k]
+            v.jfField.setValue(@jsonValue[k])
+        )
+
   getValue: ->
-    # return whatever value the field(s) have
-    # right now I just hardcode the first.
-    @fields[0].getValue()
+
+    # if this is just a single field
+      if @config.jfType
+        @fields[0].getValue()
+
+      # otherwise generate js object from the values.
+      else
+        values = {}
+        jQuery.extend(true, values, @config)
+        _.each(values, (v, k) =>
+          if v.jfField
+            values[k] = v.jfField.getValue()
+        )
+        values

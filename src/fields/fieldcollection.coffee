@@ -28,11 +28,8 @@ class jsonform.FieldCollection
         onDrop: (item, container, _super) =>
           _super(item, container)
 
-          # FIELD COLLECTION ITEM HERE.
           # sort by what number of child the el is
-          @items = _.sortBy(@items, (field) ->
-            field.jel.index()
-          )
+          @items = _.sortBy(@items, (item) -> item.jel.index())
 
           jsonform.helpers.changed()
       )
@@ -41,17 +38,9 @@ class jsonform.FieldCollection
     results = _.map(@items, (item) -> item.getValue())
     _.without(results, "", undefined, null)
 
-  addItem: (defaultValue) ->
+  addItem: (jsonValue) ->
 
-    # remove some values that are meant for the
-    # collection.
-    fieldConfig = _.extend({}, @config)
-    delete fieldConfig.jfTitle
-    delete fieldConfig.jfHelper
-    field = jsonform.helpers.newField(fieldConfig)
-    # field
-
-    item = new jsonform.FieldCollectionItem(@config, defaultValue)
+    item = new jsonform.FieldCollectionItem(@config, jsonValue)
     @jel.find(".jfCollection").append(item.el)
     item.render()
     @items.push(item)
@@ -74,26 +63,8 @@ class jsonform.FieldCollection
     # call changed to update json
     jsonform.helpers.changed()
 
-  fieldsFromValues: (vals) ->
-
-    # if the config has a jfType in the root object, it means
-    # that each array item is a single value.
-    if @config.jfType
-
-      # if this field needs extra values for setvalue,
-      # call the function. This is mostly for select boxes
-      # where we also need the label besides the value
-      if jsonform[@config.jfType].findExtraValues
-        jsonform[@config.jfType].findExtraValues(@config, vals, (vals) =>
-          _.each(vals, (val) => @addItem(val))
-        )
-      else
-        _.each(vals, (val) => @addItem(val))
-
-    # if it doesn't have a jfType, each array item will have multiple
-    # values.
-    else
-      console.log vals
+  itemsFromValues: (vals) ->
+    _.each(vals, (val) => @addItem(val))
 
   checkAddState: ->
     if @config.jfMax

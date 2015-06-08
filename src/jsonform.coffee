@@ -137,9 +137,9 @@ class jsonform.Form
     if _.isArray(obj)
 
       # if config has single item and it has jfCollection
-      # fill with fields based on values
+      # create collection items with values.
       if jsonConfig.length == 1 && jsonConfig[0].jfCollection
-        jsonConfig[0].jfCollection.fieldsFromValues(obj)
+        jsonConfig[0].jfCollection.itemsFromValues(obj)
       else
         _.each(obj, (v, i) =>
           @fillFields(obj[i], jsonConfig[i])
