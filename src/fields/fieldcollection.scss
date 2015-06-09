@@ -1,3 +1,12 @@
+.jfCollectionItem {
+  background-color: #FAFAFA;
+  padding: 10px;
+  border: 1px solid #C7C7C7;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  max-width: 400px;
+}
+
 .jfAdd {
   width: 30px;
   height: 30px;
@@ -9,20 +18,25 @@
   pointer-events: none;
 }
 
-.jfDel {
-  vertical-align: middle;
+a.jfDel {
+  font-size: 14px;
+  text-decoration: none;
+  padding: 3px 5px;
+  margin-top: 10px;
   margin-left: 5px;
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
+  color: #DA7D7D;
+  display: inline-block;
+  background-color: #ECC8C8;
 }
 
 .jfSort {
-  color: #282828;
+  font-size: 14px;
+  margin-top: 10px;
+  margin-right: 5px;
+  color: #565555;
   display: inline-block;
-  background-color: #F7F7F7;
+  background-color: #DBDBDB;
   text-align: center;
-  border: 1px solid #999;
   padding: 3px 5px;
   vertical-align: top;
   border-radius: 3px;
