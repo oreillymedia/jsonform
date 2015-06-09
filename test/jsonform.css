@@ -49,7 +49,7 @@ a.jfBtn, a.jfBtn:link {
   opacity: 0.4;
   pointer-events: none; }
 
-.jfDel {
+a.jfDel {
   font-size: 14px;
   text-decoration: none;
   padding: 3px 5px;
