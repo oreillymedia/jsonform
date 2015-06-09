@@ -1,6 +1,6 @@
 class jsonform.AjaxField
 
-  @findExtraValues: (config, vals, success) ->
+  @preloadValues: (config, vals, success) ->
 
     # remove null values
     vals = _.compact(vals)
@@ -56,10 +56,12 @@ class jsonform.AjaxField
   setValue: (val) ->
 
     # if val is a primitive, we have to load the value to
-    # use as label in the select box. This happens only on single
-    # fields where setValue is called from lib.
+    # use as label in the select box. This makes a HTTP request per
+    # field, which is annoying for hundreds of fields. However, it
+    # was too hard to implement for collections with nexted objects, so
+    # that's how it is right now.
     if !_.isObject(val)
-      @constructor.findExtraValues(@config, [val], (newVal) =>
+      @constructor.preloadValues(@config, [val], (newVal) =>
         @setValue(newVal[0])
       )
     else

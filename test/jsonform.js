@@ -30,7 +30,7 @@ window.jsonform.helpers = {
 };
 
 jsonform.AjaxField = (function() {
-  AjaxField.findExtraValues = function(config, vals, success) {
+  AjaxField.preloadValues = function(config, vals, success) {
     var query;
     vals = _.compact(vals);
     if (_.isEmpty(vals)) {
@@ -92,7 +92,7 @@ jsonform.AjaxField = (function() {
 
   AjaxField.prototype.setValue = function(val) {
     if (!_.isObject(val)) {
-      return this.constructor.findExtraValues(this.config, [val], (function(_this) {
+      return this.constructor.preloadValues(this.config, [val], (function(_this) {
         return function(newVal) {
           return _this.setValue(newVal[0]);
         };
@@ -419,7 +419,7 @@ jsonform.SelectAjaxField = (function() {
     var ajaxConfig;
     this.selectField.setValue(val[this.config.jfSelectKey]);
     ajaxConfig = this.getConfigBySelectKey(this.selectField.getValue());
-    return jsonform.AjaxField.findExtraValues(ajaxConfig, [val[this.config.jfAjaxKey]], (function(_this) {
+    return jsonform.AjaxField.preloadValues(ajaxConfig, [val[this.config.jfAjaxKey]], (function(_this) {
       return function(data) {
         _this.ajaxField.config = ajaxConfig;
         return _this.ajaxField.setValue(data[0]);

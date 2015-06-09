@@ -33,14 +33,6 @@ class jsonform.FieldCollectionItem
           @fields.push field
       )
 
-
-    # ALSO FIND EXTRA VALUES. SHOULD BE RENAMED PRELOAD.
-    #if jsonform[@config.jfType].findExtraValues
-    #    jsonform[@config.jfType].findExtraValues(@config, vals, (vals) =>
-    #      _.each(vals, (val) => @addItem(val))
-    #    )
-    #  else
-
   render: ->
 
     @jel.html("")

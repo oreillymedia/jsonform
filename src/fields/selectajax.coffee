@@ -27,7 +27,7 @@ class jsonform.SelectAjaxField
     # find config based on selected key and load the
     # needed extra values using that config
     ajaxConfig = @getConfigBySelectKey(@selectField.getValue())
-    jsonform.AjaxField.findExtraValues(ajaxConfig, [val[@config.jfAjaxKey]], (data) =>
+    jsonform.AjaxField.preloadValues(ajaxConfig, [val[@config.jfAjaxKey]], (data) =>
       @ajaxField.config = ajaxConfig
       @ajaxField.setValue(data[0])
     )
